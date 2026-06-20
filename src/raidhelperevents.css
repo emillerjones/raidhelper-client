@@ -1,0 +1,409 @@
+.raid-calendar-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  padding-top: 16px;
+  padding-left: 20px;
+  padding-right: 20px;
+  padding-bottom: 20px;
+  box-sizing: border-box;
+}
+
+.raid-calendar-brand {
+  font-size: 22px;
+  font-weight: 700;
+  color: white;
+  letter-spacing: 0.01em;
+}
+
+.raid-calendar-top-month {
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.raid-calendar-top {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-bottom: 12px;
+}
+
+.raid-calendar-top-label {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  flex-shrink: 0;
+  padding-right: 22px;
+  border-right: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.raid-stats-row {
+  display: flex;
+  gap: 8px;
+  flex: 1;
+}
+
+.raid-stat-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 5px 5px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  font: inherit;
+  cursor: default;
+  text-align: center;
+}
+
+.raid-stat-card__label {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.5);
+  margin-bottom: 2px;
+}
+
+.raid-stat-card__value {
+  font-size: 16px;
+  font-weight: 700;
+  color: white;
+}
+
+/* Raids (total) card - clears all raid-type filters */
+.raid-stat-card--total {
+  cursor: pointer;
+  background: rgba(91, 120, 255, 0.12);
+  border-color: rgba(91, 120, 255, 0.3);
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.raid-stat-card--total:hover {
+  background: rgba(91, 120, 255, 0.2);
+}
+
+.raid-stat-card--total.raid-stat-card--active {
+  background: rgba(91, 120, 255, 0.9);
+  border-color: rgba(91, 120, 255, 0.9);
+  box-shadow: 0 0 0 2px rgba(91, 120, 255, 0.4);
+}
+
+.raid-stat-card--total.raid-stat-card--active .raid-stat-card__label,
+.raid-stat-card--total.raid-stat-card--active .raid-stat-card__value {
+  color: white;
+}
+
+/* Other (unclassified) card - toggles the "Other" filter */
+.raid-stat-card--other {
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.02);
+  border-color: rgba(255, 255, 255, 0.05);
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.raid-stat-card--other .raid-stat-card__label,
+.raid-stat-card--other .raid-stat-card__value {
+  color: rgba(255, 255, 255, 0.45);
+}
+
+.raid-stat-card--other:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.raid-stat-card--other.raid-stat-card--active {
+  background: rgba(255, 255, 255, 0.85);
+  border-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.3);
+}
+
+.raid-stat-card--other.raid-stat-card--active .raid-stat-card__label,
+.raid-stat-card--other.raid-stat-card--active .raid-stat-card__value {
+  color: #14161a;
+}
+
+/* The 7 colored raid-type cards - use --raid-color set inline per card */
+/* .raid-stat-card--clickable {
+  cursor: pointer;
+  border-color: color-mix(in srgb, var(--raid-color) 35%, transparent);
+  background: color-mix(in srgb, var(--raid-color) 12%, transparent);
+  transition: background 0.12s ease, border-color 0.12s ease;
+}
+
+.raid-stat-card--clickable:hover {
+  background: color-mix(in srgb, var(--raid-color) 20%, transparent);
+}
+
+.raid-stat-card--clickable.raid-stat-card--active {
+  background: var(--raid-color);
+  border-color: var(--raid-color);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--raid-color) 40%, transparent);
+}
+
+.raid-stat-card--clickable.raid-stat-card--active .raid-stat-card__label,
+.raid-stat-card--clickable.raid-stat-card--active .raid-stat-card__value {
+  color: white;
+} */
+ .raid-stat-card--clickable {
+  cursor: pointer;
+  border-left: 3px solid var(--raid-color);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.03);
+  transition: background 0.12s ease;
+}
+
+.raid-stat-card--clickable:hover {
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.raid-stat-card--clickable.raid-stat-card--active {
+  background: var(--raid-color);
+  border-color: var(--raid-color);
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--raid-color) 40%, transparent);
+}
+
+.raid-stat-card--clickable.raid-stat-card--active .raid-stat-card__label,
+.raid-stat-card--clickable.raid-stat-card--active .raid-stat-card__value {
+  color: white;
+}
+
+.raid-calendar-search-wrap {
+  position: relative;
+  margin-bottom: 12px;
+}
+
+.raid-calendar-search-wrap::before {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 14px;
+  height: 14px;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.4);
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2'%3E%3Ccircle cx='11' cy='11' r='7'/%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'/%3E%3C/svg%3E") center / contain no-repeat;
+  pointer-events: none;
+}
+
+.raid-calendar-search {
+  width: 100%;
+  padding: 10px 12px 10px 34px;
+  border: none;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+  font-size: 0.9rem;
+  box-sizing: border-box;
+  transition: background 0.15s ease;
+}
+
+.raid-calendar-search:focus {
+  outline: none;
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.raid-calendar-search::placeholder {
+  color: rgba(255, 255, 255, 0.4);
+}
+
+.raid-calendar-layout {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+.raid-calendar-sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 260px;
+  flex-shrink: 0;
+  padding: 12px;
+  overflow-y: auto;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 6px 0px 0px 6px;
+  background: rgba(255, 255, 255, 0.02);
+  box-sizing: border-box;
+}
+
+.raid-calendar {
+  flex: 1;
+  min-width: 0;
+  overflow-y: auto;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  grid-auto-rows: min-content;
+  align-content: start;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-left: none;
+  border-radius: 0px 6px 6px 0px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.raid-calendar__day {
+  min-height: 145px;
+  padding: 10px;
+  overflow-y: auto;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.raid-calendar-month {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  margin: 0 0 12px 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: white;
+}
+
+.raid-calendar__header {
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+  font-weight: 600;
+  font-size: 15px;
+  background: rgba(255, 255, 255, 0.06);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  box-sizing: border-box;
+}
+
+.raid-calendar__date {
+  font-size: 0.85rem;
+  opacity: 0.75;
+  margin-bottom: 8px;
+}
+
+.raid-calendar__event {
+  display: flex;
+  align-items: stretch;
+  gap: 8px;
+  padding: 7px 8px;
+  height: 70px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  background: rgba(91, 120, 255, 0.18);
+  border: 1px solid rgba(91, 120, 255, 0.28);
+  font-size: 0.78rem;
+  color: inherit;
+  text-decoration: none;
+}
+
+.raid-calendar__event:hover {
+  background: rgba(91, 120, 255, 0.28);
+}
+
+.raid-calendar__event-icon {
+  display: flex;
+  align-items: stretch;
+  width: 50px;
+  margin-right: 8px;
+}
+
+.raid-calendar__event-icon .guild-badge {
+  width: 100%;
+  height: 100%;
+  margin-right: 0;
+  border-radius: 100px;
+}
+
+.raid-calendar__event-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.raid-calendar__event-details strong {
+  font-size: 0.74rem;
+}
+
+.raid-calendar__event-details span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+
+
+
+
+
+.guild-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  margin-right: 6px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: white;
+  flex-shrink: 0;
+  vertical-align: middle;
+}
+
+.guild-badge--image {
+  object-fit: cover;
+}
+
+.guild-badge--fallback {
+  display: inline-flex;
+}
+
+.guild-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  background: transparent;
+  color: rgba(255, 255, 255, 0.75);
+  font-size: 0.85rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.12s ease, color 0.12s ease;
+}
+.guild-row__count {
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.4);
+  flex-shrink: 0;
+}
+
+.guild-row--active .guild-row__count {
+  color: rgba(255, 255, 255, 0.7);
+}
+.guild-row:last-child {
+  border-bottom: none;
+}
+
+.guild-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+  color: white;
+}
+
+.guild-row--active {
+  background: rgba(91, 120, 255, 0.15);
+  color: white;
+  border-left: 2px solid rgba(91, 120, 255, 0.9);
+  padding-left: 12px;
+}
+
+.guild-row__name {
+  overflow: hidden;
+  flex: 1;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
