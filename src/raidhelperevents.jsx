@@ -102,10 +102,20 @@ function formatTime(event) {
 
 
 
+function formatLastUpdated(date) {
+  if (!date) return "";
+  return date.toLocaleTimeString([], {
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+}
+
 export default function RaidHelperEvents() {
   const [events, setEvents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGuilds, setSelectedGuilds] = useState([]);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -134,6 +144,7 @@ export default function RaidHelperEvents() {
 
         if (isMounted) {
           setEvents(mappedEvents);
+          setLastUpdated(new Date());
           console.log("Mapped raid calendar events:", mappedEvents);
         }
       } catch (err) {
@@ -261,6 +272,11 @@ export default function RaidHelperEvents() {
           <span className="raid-calendar-top-month">
             {today.toLocaleString("default", { month: "long" })} {year}
           </span>
+          {lastUpdated && (
+            <span className="raid-calendar-last-updated">
+              Data last refreshed at: {formatLastUpdated(lastUpdated)}
+            </span>
+          )}
         </div>
 
         <div className="raid-stats-row">
