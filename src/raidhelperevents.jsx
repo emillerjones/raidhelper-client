@@ -156,11 +156,11 @@ export default function RaidHelperEvents() {
     // initial load
     fetchEvents();
 
-    // poll every 10 minutes, but skip while the tab is backgrounded
+    // poll every 10 minutes, but do not skip while the tab is backgrounded
     const interval = setInterval(() => {
-      if (!document.hidden) {
-        fetchEvents();
-      }
+      // if (!document.hidden) {
+      //   fetchEvents();
+      // }
     }, 10 * 60 * 1000);
 
     // refresh immediately when the tab regains focus, in case it was
