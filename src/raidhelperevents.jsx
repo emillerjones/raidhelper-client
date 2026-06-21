@@ -274,7 +274,7 @@ export default function RaidHelperEvents() {
           </span>
           {lastUpdated && (
             <span className="raid-calendar-last-updated">
-              Data last refreshed at: {formatLastUpdated(lastUpdated)}
+              {formatLastUpdated(lastUpdated)}
             </span>
           )}
         </div>
