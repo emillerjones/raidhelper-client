@@ -66,7 +66,7 @@
   height: 15px;
 }
 
-css.horizon-btn-light {
+.horizon-btn-light {
   background: linear-gradient(180deg, #ffffff 0%, #d8dade 100%);
   color: #0a0a0c;
   padding: 10px 20px;
@@ -212,6 +212,16 @@ css.horizon-btn-light {
      state. Disabling pinch-zoom specifically over this element avoids
      the conflict without affecting zoom on the rest of the page. */
   touch-action: pan-y;
+}
+
+/* Mobile variant: phone-shaped (9:18) instead of the desktop 16:9, and
+   capped to a reasonable width so it doesn't stretch full-bleed on a
+   narrow viewport — the embedded app itself renders its mobile swipe
+   view at this width, not a shrunk desktop grid. */
+.horizon-app-iframe-wrap--mobile {
+  aspect-ratio: 9 / 18;
+  max-width: 340px;
+  margin: 0 auto;
 }
 
 .horizon-app-iframe {

@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import "./HorizonSplash.css";
-import HorizonNav from "./layout/Navbar";
 
 const IFRAME_NATURAL_WIDTH = 1600;
 const IFRAME_NATURAL_HEIGHT = 900;
@@ -9,27 +8,22 @@ const IFRAME_NATURAL_HEIGHT = 900;
 const FEATURES = [
   {
     title: "Unified Calendar",
-    desc: "All your Discord communities in one place. See every event in a single, beautiful view.",
+    desc: "Every raid from every guild you follow, in one place.",
     icon: "calendar",
   },
   {
-    title: "Real-Time Updates",
-    desc: "Events sync in real time so you're always up to date without lifting a finger.",
+    title: "No Signup Needed",
+    desc: "Open a link and see the calendar instantly. No account required.",
     icon: "bolt",
   },
   {
-    title: "Smart Alerts",
-    desc: "Get notified about the events that matter most to you.",
-    icon: "bell",
-  },
-  {
-    title: "Built for Raiders",
-    desc: "Designed by gamers, for gamers. Fast, powerful, and reliable.",
+    title: "Built for Classic Era",
+    desc: "Raid sizes and schedules that match how Classic Era guilds actually run.",
     icon: "shield",
   },
   {
     title: "Privacy First",
-    desc: "We never access your messages. Your data stays private.",
+    desc: "We only read raid posts. Your messages stay private, always.",
     icon: "lock",
   },
 ];
@@ -49,12 +43,6 @@ const ICONS = {
   bolt: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
       <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z" />
-    </svg>
-  ),
-  bell: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-      <path d="M13.7 21a2 2 0 0 1-3.4 0" />
     </svg>
   ),
   shield: (
@@ -81,17 +69,31 @@ const LiveCalendarPreview = () => {
     const el = wrapRef.current;
     if (!el) return;
 
+    // Throttled so pinch-zoom on mobile (which fires a flood of resize
+    // events mid-gesture) doesn't repeatedly re-apply transform: scale()
+    // to the iframe while the browser's own native zoom transform is
+    // also actively changing — two transform systems fighting over the
+    // same element has been observed to break the iframe's navigation
+    // state on iOS Safari ("Can't open this page").
+    let rafId = null;
     const updateScale = () => {
-      const width = el.offsetWidth;
-      if (width > 0) {
-        setScale(width / IFRAME_NATURAL_WIDTH);
-      }
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        const width = el.offsetWidth;
+        if (width > 0) {
+          setScale(width / IFRAME_NATURAL_WIDTH);
+        }
+      });
     };
 
     updateScale();
     const observer = new ResizeObserver(updateScale);
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, []);
 
   return (
@@ -119,15 +121,15 @@ export default function HorizonSplash() {
         <div className="horizon-hero-copy">
           <span className="horizon-eyebrow">DISCORD EVENT CALENDAR</span>
           <h1 className="horizon-headline">
-            Your raid week<br />in one view
+            See everything<br />ahead.
           </h1>
           <p className="horizon-subhead">
-            Horizon brings upcoming raids from all your Discord communities into one calendar, 
-            so you always know what's next.
+            Horizon brings every event from your Discord communities into one
+            powerful calendar so you never miss what matters.
           </p>
           <div className="horizon-cta-row">
             <Link to="/calendar" className="horizon-btn horizon-btn-light horizon-btn-lg">
-              Get Started Free
+              Open Calendar
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8">
                 <path d="M3 8h10M9 4l4 4-4 4" />
               </svg>

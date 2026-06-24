@@ -32,6 +32,7 @@
   font-family: var(--font-display);
   overflow-x: hidden;
   min-height: 100vh;
+  padding-top: 75px;
 }
 
 .horizon-page * {
@@ -48,11 +49,16 @@
   font-size: 14.5px;
   font-weight: 600;
   border-radius: var(--radius-sm);
+ 
   border: none;
   cursor: pointer;
   white-space: nowrap;
-  transition: transform 0.15s ease, filter 0.15s ease, background 0.15s ease;
   text-decoration: none;
+  transition: transform 0.15s ease, filter 0.15s ease, background 0.15s ease;
+}
+
+.horizon-btn:visited {
+  color: inherit;
 }
 
 .horizon-btn svg {
@@ -64,6 +70,10 @@
   background: linear-gradient(180deg, #ffffff 0%, #d8dade 100%);
   color: #0a0a0c;
   padding: 10px 20px;
+}
+
+.horizon-btn-light:visited {
+  color: #0a0a0c;
 }
 
 .horizon-btn-light:hover {
@@ -102,17 +112,15 @@
   z-index: 1;
   max-width: 1500px;
   margin: 0 auto;
-  padding: 38px 46px 0;
+  padding: 48px 56px 0;
   display: grid;
   grid-template-columns: minmax(380px, 480px) 1fr;
   gap: 20px;
   align-items: start;
-  padding-top:100px;
 }
 
 .horizon-hero-copy {
   padding-top: 56px;
-  
 }
 
 .horizon-eyebrow {
@@ -176,8 +184,6 @@
 .horizon-app-frame {
   position: relative;
   padding: 28px;
-  /* schooch the calender down */
-  padding-top:50px;
 }
 
 .horizon-app-glow {
@@ -195,12 +201,17 @@
   aspect-ratio: 16 / 9;
   overflow: hidden;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.224);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   background: #05070a;
   box-shadow:
     0 20px 50px -25px rgba(0, 0, 0, 0.6),
     0 0 0 1px rgba(255, 255, 255, 0.03) inset;
-    filter: brightness(0.75);
+  /* The preview already auto-scales to fit its container, so manual
+     pinch-zoom serves no purpose here — and on iOS Safari, zooming over
+     a transform-scaled iframe has been observed to break its navigation
+     state. Disabling pinch-zoom specifically over this element avoids
+     the conflict without affecting zoom on the rest of the page. */
+  touch-action: pan-y;
 }
 
 .horizon-app-iframe {
@@ -234,7 +245,7 @@
 
 .horizon-features-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
 
@@ -279,7 +290,7 @@
     padding-top: 0;
   }
   .horizon-features-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 

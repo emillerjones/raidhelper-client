@@ -2,8 +2,11 @@ import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import "./HorizonSplash.css";
 
-const IFRAME_NATURAL_WIDTH = 1600;
-const IFRAME_NATURAL_HEIGHT = 900;
+const DESKTOP_IFRAME_WIDTH = 1600;
+const DESKTOP_IFRAME_HEIGHT = 900;
+const MOBILE_IFRAME_WIDTH = 390;
+const MOBILE_IFRAME_HEIGHT = 780;
+const MOBILE_BREAKPOINT = 768;
 
 const FEATURES = [
   {
@@ -58,11 +61,39 @@ const ICONS = {
   ),
 };
 
+// Tracks whether we're at/under the mobile breakpoint, same 768px threshold
+// used by Navbar.jsx and raidhelperevents.jsx, so all three stay consistent.
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth <= MOBILE_BREAKPOINT : false
+  );
+
+  useEffect(() => {
+    function handleResize() {
+      setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT);
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return isMobile;
+}
+
 /* Embeds the real, live Raid Calendar app and scales its full-size
    render down to fit the available width, so the real app's own
-   responsive breakpoints don't kick in awkwardly at a tiny iframe size. */
-const LiveCalendarPreview = () => {
+   responsive breakpoints don't kick in awkwardly at a tiny iframe size.
+
+   `kind` picks which native size to render the iframe at: "desktop"
+   loads the full 7-day grid, "mobile" renders at a genuinely narrow
+   width so the app's own mobile breakpoint kicks in and shows the
+   swipeable day view instead of a tiny shrunk desktop layout. Showing
+   the already-appropriately-sized mobile view (instead of a heavily
+   scaled-down desktop one) also reduces the temptation to pinch-zoom
+   the embed at all, which was implicated in the iOS Safari crash. */
+const LiveCalendarPreview = ({ kind }) => {
   const wrapRef = useRef(null);
+  const naturalWidth = kind === "mobile" ? MOBILE_IFRAME_WIDTH : DESKTOP_IFRAME_WIDTH;
+  const naturalHeight = kind === "mobile" ? MOBILE_IFRAME_HEIGHT : DESKTOP_IFRAME_HEIGHT;
   const [scale, setScale] = useState(0.5);
 
   useEffect(() => {
@@ -82,7 +113,7 @@ const LiveCalendarPreview = () => {
         rafId = null;
         const width = el.offsetWidth;
         if (width > 0) {
-          setScale(width / IFRAME_NATURAL_WIDTH);
+          setScale(width / naturalWidth);
         }
       });
     };
@@ -94,17 +125,24 @@ const LiveCalendarPreview = () => {
       observer.disconnect();
       if (rafId) cancelAnimationFrame(rafId);
     };
-  }, []);
+  }, [naturalWidth]);
 
   return (
-    <div className="horizon-app-iframe-wrap" ref={wrapRef}>
+    <div
+      className={
+        kind === "mobile"
+          ? "horizon-app-iframe-wrap horizon-app-iframe-wrap--mobile"
+          : "horizon-app-iframe-wrap"
+      }
+      ref={wrapRef}
+    >
       <iframe
         src="https://raidhelper-client.vercel.app/calendar"
-        title="Raid Calendar live preview"
+        title={kind === "mobile" ? "Raid Calendar live preview, mobile" : "Raid Calendar live preview"}
         className="horizon-app-iframe"
         style={{
-          width: `${IFRAME_NATURAL_WIDTH}px`,
-          height: `${IFRAME_NATURAL_HEIGHT}px`,
+          width: `${naturalWidth}px`,
+          height: `${naturalHeight}px`,
           transform: `scale(${scale})`,
         }}
         loading="lazy"
@@ -114,6 +152,8 @@ const LiveCalendarPreview = () => {
 };
 
 export default function HorizonSplash() {
+  const isMobile = useIsMobile();
+
   return (
     <div className="horizon-page">
       {/* Hero */}
@@ -152,7 +192,7 @@ export default function HorizonSplash() {
         {/* Product preview - live embed of the real Raid Calendar app */}
         <div className="horizon-app-frame">
           <div className="horizon-app-glow" aria-hidden="true" />
-          <LiveCalendarPreview />
+          <LiveCalendarPreview kind={isMobile ? "mobile" : "desktop"} />
         </div>
       </section>
 
