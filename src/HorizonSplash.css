@@ -32,6 +32,7 @@
   font-family: var(--font-display);
   overflow-x: hidden;
   min-height: 100vh;
+  padding-top: 75px;
 }
 
 .horizon-page * {
@@ -48,6 +49,7 @@
   font-size: 14.5px;
   font-weight: 600;
   border-radius: var(--radius-sm);
+ 
   border: none;
   cursor: pointer;
   white-space: nowrap;
@@ -64,10 +66,14 @@
   height: 15px;
 }
 
-.horizon-btn-light {
+css.horizon-btn-light {
   background: linear-gradient(180deg, #ffffff 0%, #d8dade 100%);
   color: #0a0a0c;
   padding: 10px 20px;
+}
+
+.horizon-btn-light:visited {
+  color: #0a0a0c;
 }
 
 .horizon-btn-light:hover {
@@ -239,7 +245,7 @@
 
 .horizon-features-grid {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 20px;
 }
 
@@ -284,7 +290,7 @@
     padding-top: 0;
   }
   .horizon-features-grid {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 

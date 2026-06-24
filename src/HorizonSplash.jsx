@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import "./HorizonSplash.css";
-import HorizonNav from "./layout/NavBar";
 
 const IFRAME_NATURAL_WIDTH = 1600;
 const IFRAME_NATURAL_HEIGHT = 900;
@@ -8,27 +8,22 @@ const IFRAME_NATURAL_HEIGHT = 900;
 const FEATURES = [
   {
     title: "Unified Calendar",
-    desc: "All your Discord communities in one place. See every event in a single, beautiful view.",
+    desc: "Every raid from every guild you follow, in one place.",
     icon: "calendar",
   },
   {
-    title: "Real-Time Updates",
-    desc: "Events sync in real time so you're always up to date without lifting a finger.",
+    title: "No Signup Needed",
+    desc: "Open a link and see the calendar instantly. No account required.",
     icon: "bolt",
   },
   {
-    title: "Smart Alerts",
-    desc: "Get notified about the events that matter most to you.",
-    icon: "bell",
-  },
-  {
-    title: "Built for Raiders",
-    desc: "Designed by gamers, for gamers. Fast, powerful, and reliable.",
+    title: "Built for Classic Era",
+    desc: "Raid sizes and schedules that match how Classic Era guilds actually run.",
     icon: "shield",
   },
   {
     title: "Privacy First",
-    desc: "We never access your messages. Your data stays private.",
+    desc: "We only read raid posts. Your messages stay private, always.",
     icon: "lock",
   },
 ];
@@ -48,12 +43,6 @@ const ICONS = {
   bolt: (
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
       <path d="M13 2 4 14h6l-1 8 9-12h-6l1-8z" />
-    </svg>
-  ),
-  bell: (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-      <path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9" />
-      <path d="M13.7 21a2 2 0 0 1-3.4 0" />
     </svg>
   ),
   shield: (
@@ -139,19 +128,19 @@ export default function HorizonSplash() {
             powerful calendar so you never miss what matters.
           </p>
           <div className="horizon-cta-row">
-            <button className="horizon-btn horizon-btn-light horizon-btn-lg">
-              Get Started Free
+            <Link to="/calendar" className="horizon-btn horizon-btn-light horizon-btn-lg">
+              Open Calendar
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8">
                 <path d="M3 8h10M9 4l4 4-4 4" />
               </svg>
-            </button>
-            <button className="horizon-btn horizon-btn-outline horizon-btn-lg">
+            </Link>
+            <Link to="/how-it-works" className="horizon-btn horizon-btn-outline horizon-btn-lg">
               See How It Works
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <circle cx="8" cy="8" r="6.5" />
                 <path d="M6.5 5.5l4 2.5-4 2.5z" fill="currentColor" stroke="none" />
               </svg>
-            </button>
+            </Link>
           </div>
           <ul className="horizon-trust-row">
             <li>Works with any Discord server</li>
