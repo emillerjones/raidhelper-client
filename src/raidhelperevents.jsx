@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
+import useEmblaCarousel from "embla-carousel-react";
 import horizonLogo from "./assets/horizon-logo.png";
 import "./raidhelperevents.css";
 
@@ -24,6 +25,8 @@ const RAID_COLORS = {
   AQ40: "#0F6E56",    // teal
   Naxx: "#185FA5",    // blue
 };
+
+const MOBILE_BREAKPOINT = 768;
 
 function matchRaidType(title) {
   if (!title) return null;
@@ -101,10 +104,141 @@ function formatTime(event) {
   });
 }
 
+// Single event card, shared between the desktop grid and the mobile day view
+function EventCard({ event, allGuildNames }) {
+  return (
+    <a
+      className="raid-calendar__event"
+      href={`https://discord.com/channels/${event.guild_id}/${event.channel_id}`}
+      target="_blank"
+      rel="noreferrer"
+    >
+      <div className="raid-calendar__event-icon">
+        <GuildBadge
+          guildName={event.guildName}
+          guildIconUrl={event.guildIconUrl}
+          allGuildNames={allGuildNames}
+        />
+      </div>
+      <div className="raid-calendar__event-details">
+        <strong>{formatTime(event)}</strong>
+        <span>{event.guildName}</span>
+        <span>{event.raid_name || event.title}</span>
+      </div>
+    </a>
+  );
+}
+
+// Mobile single-day swipe view, powered by Embla
+function MobileDayCarousel({ calendarDays, eventsForDay, allGuildNames }) {
+  const [emblaRef, emblaApi] = useEmblaCarousel({
+    align: "start",
+    skipSnaps: false,
+  });
+  const [selectedIndex, setSelectedIndex] = useState(0);
+
+  const onSelect = useCallback(() => {
+    if (!emblaApi) return;
+    setSelectedIndex(emblaApi.selectedScrollSnap());
+  }, [emblaApi]);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    onSelect();
+    emblaApi.on("select", onSelect);
+    return () => emblaApi.off("select", onSelect);
+  }, [emblaApi, onSelect]);
+
+  const scrollPrev = useCallback(() => emblaApi && emblaApi.scrollPrev(), [emblaApi]);
+  const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
+
+  const activeDay = calendarDays[selectedIndex];
+
+  return (
+    <div className="raid-mobile-day-view">
+      <div className="raid-mobile-day-header">
+        <button
+          type="button"
+          className="raid-mobile-day-nav"
+          onClick={scrollPrev}
+          aria-label="Previous day"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+
+        <div className="raid-mobile-day-label">
+          <span className="raid-mobile-day-weekday">
+            {activeDay?.toLocaleDateString("default", { weekday: "long" })}
+          </span>
+          <span className="raid-mobile-day-date">
+            {activeDay?.toLocaleDateString("default", { month: "short", day: "numeric" })}
+          </span>
+        </div>
+
+        <button
+          type="button"
+          className="raid-mobile-day-nav"
+          onClick={scrollNext}
+          aria-label="Next day"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </button>
+      </div>
+
+      <div className="raid-mobile-dots">
+        {calendarDays.map((day, i) => (
+          <span
+            key={day.toISOString()}
+            className={i === selectedIndex ? "raid-mobile-dot raid-mobile-dot--active" : "raid-mobile-dot"}
+          />
+        ))}
+      </div>
+
+      <div className="raid-mobile-embla" ref={emblaRef}>
+        <div className="raid-mobile-embla__container">
+          {calendarDays.map((day) => {
+            const dayEvents = eventsForDay(day);
+            return (
+              <div className="raid-mobile-embla__slide" key={day.toISOString()}>
+                {dayEvents.length === 0 ? (
+                  <p className="raid-mobile-empty">No raids scheduled.</p>
+                ) : (
+                  dayEvents.map((event) => (
+                    <EventCard
+                      key={event.raidhelper_event_id}
+                      event={event}
+                      allGuildNames={allGuildNames}
+                    />
+                  ))
+                )}
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function RaidHelperEvents() {
   const [events, setEvents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGuilds, setSelectedGuilds] = useState([]);
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth <= MOBILE_BREAKPOINT : false
+  );
+
+  useEffect(() => {
+    function handleResize() {
+      setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT);
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   useEffect(() => {
     let isMounted = true;
@@ -203,7 +337,11 @@ export default function RaidHelperEvents() {
     );
   }
 
+  // On mobile, filters/search are hidden entirely, so skip them in the
+  // filtering logic too rather than leaving stale selections silently applied.
   const filteredEvents = events.filter((event) => {
+    if (isMobile) return true;
+
     const searchText = `
       ${event.raid_name || ""}
       ${event.raid_leader || ""}
@@ -256,143 +394,137 @@ export default function RaidHelperEvents() {
           </span>
         </div>
 
-        <div className="raid-stats-row">
-          <button
-            type="button"
-            className={
-              selectedRaidTypes.length === 0
-                ? "raid-stat-card raid-stat-card--total raid-stat-card--active"
-                : "raid-stat-card raid-stat-card--total"
-            }
-            onClick={() => setSelectedRaidTypes([])}
-          >
-            <span className="raid-stat-card__label">Total Raids</span>
-            <span className="raid-stat-card__value">{totalRaidsThisWeek}</span>
-          </button>
-
-          {Object.keys(RAID_KEYWORDS).map((raidType) => (
+        {!isMobile && (
+          <div className="raid-stats-row">
             <button
-              key={raidType}
               type="button"
               className={
-                selectedRaidTypes.includes(raidType)
-                  ? "raid-stat-card raid-stat-card--clickable raid-stat-card--active"
-                  : "raid-stat-card raid-stat-card--clickable"
+                selectedRaidTypes.length === 0
+                  ? "raid-stat-card raid-stat-card--total raid-stat-card--active"
+                  : "raid-stat-card raid-stat-card--total"
               }
-              style={{ "--raid-color": RAID_COLORS[raidType] }}
-              onClick={() => toggleRaidType(raidType)}
+              onClick={() => setSelectedRaidTypes([])}
             >
-              <span className="raid-stat-card__label">{raidType}</span>
-              <span className="raid-stat-card__value">{raidTypeCounts[raidType] || 0}</span>
+              <span className="raid-stat-card__label">Total Raids</span>
+              <span className="raid-stat-card__value">{totalRaidsThisWeek}</span>
             </button>
-          ))}
 
-          <button
-            type="button"
-            className={
-              selectedRaidTypes.includes("Other")
-                ? "raid-stat-card raid-stat-card--other raid-stat-card--active"
-                : "raid-stat-card raid-stat-card--other"
-            }
-            onClick={() => toggleRaidType("Other")}
-          >
-            <span className="raid-stat-card__label">Other</span>
-            <span className="raid-stat-card__value">{raidTypeCounts.Other || 0}</span>
-          </button>
-        </div>
-      </div>
-
-
-      <div className="raid-calendar-layout">
-        <aside className="raid-calendar-sidebar">
-          <div className="raid-calendar-search-wrap">
-            <input
-              className="raid-calendar-search"
-              type="text"
-              placeholder="Search raids, guilds..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-          </div>
-
-          <button
-            type="button"
-            className={
-              selectedGuilds.length === 0
-                ? "guild-row guild-row--active"
-                : "guild-row"
-            }            
-            onClick={() => setSelectedGuilds([])}
-          >
-            <span className="guild-row__name">Show All Guilds</span>
-            <span className="guild-row__count">{eventsInWeek.length}</span>
-            
-          </button>
-
-          {allGuildNames.map((guild) => {
-            const guildEvent = eventsInWeek.find((e) => e.guildName === guild);
-            return (
+            {Object.keys(RAID_KEYWORDS).map((raidType) => (
               <button
-                key={guild}
+                key={raidType}
                 type="button"
                 className={
-                  selectedGuilds.includes(guild)
-                    ? "guild-row guild-row--active"
-                    : "guild-row"
+                  selectedRaidTypes.includes(raidType)
+                    ? "raid-stat-card raid-stat-card--clickable raid-stat-card--active"
+                    : "raid-stat-card raid-stat-card--clickable"
                 }
-                onClick={() => toggleGuild(guild)}
+                style={{ "--raid-color": RAID_COLORS[raidType] }}
+                onClick={() => toggleRaidType(raidType)}
               >
-                <GuildBadge
-                  guildName={guild}
-                  guildIconUrl={guildEvent?.guildIconUrl}
-                  allGuildNames={allGuildNames}
-                />
-                <span className="guild-row__name">{guild}</span>
-                <span className="guild-row__count">{guildRaidCounts[guild] || 0}</span>
+                <span className="raid-stat-card__label">{raidType}</span>
+                <span className="raid-stat-card__value">{raidTypeCounts[raidType] || 0}</span>
               </button>
-            );
-          })}
-        </aside>
+            ))}
 
-        <section className="raid-calendar">
-          {calendarDays.map((day) => (
-            <div className="raid-calendar__header" key={day.toISOString()}>
-              {day.toLocaleDateString("default", { weekday: "short" })} - {day.getDate()}
-            </div>
-          ))}
-
-          {calendarDays.map((day, index) => (
-            <div className="raid-calendar__day" key={index}>
-              {day && (
-                <>
-                  {eventsForDay(day).map((event) => (
-                    <a
-                      className="raid-calendar__event"
-                      key={event.raidhelper_event_id}
-                      href={`https://discord.com/channels/${event.guild_id}/${event.channel_id}`}
-                      target="_blank"
-                      rel="noreferrer"
-                    >
-                      <div className="raid-calendar__event-icon">
-                        <GuildBadge
-                          guildName={event.guildName}
-                          guildIconUrl={event.guildIconUrl}
-                          allGuildNames={allGuildNames}
-                        />
-                      </div>
-                      <div className="raid-calendar__event-details">
-                        <strong>{formatTime(event)}</strong>
-                        <span>{event.guildName}</span>
-                        <span>{event.raid_name || event.title}</span>
-                      </div>
-                    </a>
-                  ))}
-                </>
-              )}
-            </div>
-          ))}
-        </section>
+            <button
+              type="button"
+              className={
+                selectedRaidTypes.includes("Other")
+                  ? "raid-stat-card raid-stat-card--other raid-stat-card--active"
+                  : "raid-stat-card raid-stat-card--other"
+              }
+              onClick={() => toggleRaidType("Other")}
+            >
+              <span className="raid-stat-card__label">Other</span>
+              <span className="raid-stat-card__value">{raidTypeCounts.Other || 0}</span>
+            </button>
+          </div>
+        )}
       </div>
+
+      {isMobile ? (
+        <MobileDayCarousel
+          calendarDays={calendarDays}
+          eventsForDay={eventsForDay}
+          allGuildNames={allGuildNames}
+        />
+      ) : (
+        <div className="raid-calendar-layout">
+          <aside className="raid-calendar-sidebar">
+            <div className="raid-calendar-search-wrap">
+              <input
+                className="raid-calendar-search"
+                type="text"
+                placeholder="Search raids, guilds..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+
+            <button
+              type="button"
+              className={
+                selectedGuilds.length === 0
+                  ? "guild-row guild-row--active"
+                  : "guild-row"
+              }            
+              onClick={() => setSelectedGuilds([])}
+            >
+              <span className="guild-row__name">Show All Guilds</span>
+              <span className="guild-row__count">{eventsInWeek.length}</span>
+              
+            </button>
+
+            {allGuildNames.map((guild) => {
+              const guildEvent = eventsInWeek.find((e) => e.guildName === guild);
+              return (
+                <button
+                  key={guild}
+                  type="button"
+                  className={
+                    selectedGuilds.includes(guild)
+                      ? "guild-row guild-row--active"
+                      : "guild-row"
+                  }
+                  onClick={() => toggleGuild(guild)}
+                >
+                  <GuildBadge
+                    guildName={guild}
+                    guildIconUrl={guildEvent?.guildIconUrl}
+                    allGuildNames={allGuildNames}
+                  />
+                  <span className="guild-row__name">{guild}</span>
+                  <span className="guild-row__count">{guildRaidCounts[guild] || 0}</span>
+                </button>
+              );
+            })}
+          </aside>
+
+          <section className="raid-calendar">
+            {calendarDays.map((day) => (
+              <div className="raid-calendar__header" key={day.toISOString()}>
+                {day.toLocaleDateString("default", { weekday: "short" })} - {day.getDate()}
+              </div>
+            ))}
+
+            {calendarDays.map((day, index) => (
+              <div className="raid-calendar__day" key={index}>
+                {day && (
+                  <>
+                    {eventsForDay(day).map((event) => (
+                      <EventCard
+                        key={event.raidhelper_event_id}
+                        event={event}
+                        allGuildNames={allGuildNames}
+                      />
+                    ))}
+                  </>
+                )}
+              </div>
+            ))}
+          </section>
+        </div>
+      )}
     </main>
   );
 }

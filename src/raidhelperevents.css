@@ -61,7 +61,6 @@
   font: inherit;
   cursor: default;
   text-align: center;
-  
 }
 
 .raid-stat-card__label {
@@ -89,7 +88,7 @@
 }
 
 .raid-stat-card--total.raid-stat-card--active {
-  background: rgba(111, 129, 205, 0.441);
+  background: rgba(91, 120, 255, 0.9);
   border-color: rgba(91, 120, 255, 0.9);
   box-shadow: 0 0 0 2px rgba(91, 120, 255, 0.4);
 }
@@ -271,7 +270,7 @@
   height: 70px;
   margin-bottom: 8px;
   border-radius: 8px;
-  background: rgba(89, 94, 117, 0.15);
+  background: rgba(91, 120, 255, 0.18);
   border: 1px solid rgba(91, 120, 255, 0.28);
   font-size: 0.78rem;
   color: inherit;
@@ -387,4 +386,108 @@
   text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+/* ===== Mobile single-day swipe view ===== */
+.raid-mobile-day-view {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.raid-mobile-day-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.raid-mobile-day-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
+  color: #fff;
+  cursor: pointer;
+}
+
+.raid-mobile-day-nav svg {
+  width: 18px;
+  height: 18px;
+}
+
+.raid-mobile-day-nav:active {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.raid-mobile-day-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.raid-mobile-day-weekday {
+  font-size: 17px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.raid-mobile-day-date {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.raid-mobile-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.raid-mobile-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.2);
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.raid-mobile-dot--active {
+  background: rgba(91, 120, 255, 0.9);
+  transform: scale(1.3);
+}
+
+.raid-mobile-embla {
+  overflow: hidden;
+  flex: 1;
+  min-height: 0;
+}
+
+.raid-mobile-embla__container {
+  display: flex;
+  height: 100%;
+}
+
+.raid-mobile-embla__slide {
+  flex: 0 0 100%;
+  min-width: 0;
+  overflow-y: auto;
+  padding: 2px 2px 16px;
+}
+
+.raid-mobile-embla__slide .raid-calendar__event {
+  height: auto;
+  min-height: 64px;
+}
+
+.raid-mobile-empty {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.4);
+  font-size: 0.9rem;
+  margin-top: 40px;
 }

@@ -10,11 +10,15 @@
   box-sizing: border-box;
 }
 
-.raid-calendar-brand {
-  font-size: 22px;
-  font-weight: 700;
-  color: white;
-  letter-spacing: 0.01em;
+.raid-calendar-brand-link {
+  display: flex;
+  align-items: center;
+}
+
+.raid-calendar-logo {
+  height: 24px;
+  width: auto;
+  display: block;
 }
 
 .raid-calendar-top-month {
@@ -32,7 +36,7 @@
 
 .raid-calendar-top-label {
   display: flex;
-  align-items: baseline;
+  align-items: center;
   gap: 12px;
   flex-shrink: 0;
   padding-right: 22px;
@@ -57,6 +61,7 @@
   font: inherit;
   cursor: default;
   text-align: center;
+  
 }
 
 .raid-stat-card__label {
@@ -84,7 +89,7 @@
 }
 
 .raid-stat-card--total.raid-stat-card--active {
-  background: rgba(91, 120, 255, 0.9);
+  background: rgba(111, 129, 205, 0.441);
   border-color: rgba(91, 120, 255, 0.9);
   box-shadow: 0 0 0 2px rgba(91, 120, 255, 0.4);
 }
@@ -122,29 +127,7 @@
   color: #14161a;
 }
 
-/* The 7 colored raid-type cards - use --raid-color set inline per card */
-/* .raid-stat-card--clickable {
-  cursor: pointer;
-  border-color: color-mix(in srgb, var(--raid-color) 35%, transparent);
-  background: color-mix(in srgb, var(--raid-color) 12%, transparent);
-  transition: background 0.12s ease, border-color 0.12s ease;
-}
-
-.raid-stat-card--clickable:hover {
-  background: color-mix(in srgb, var(--raid-color) 20%, transparent);
-}
-
-.raid-stat-card--clickable.raid-stat-card--active {
-  background: var(--raid-color);
-  border-color: var(--raid-color);
-  box-shadow: 0 0 0 2px color-mix(in srgb, var(--raid-color) 40%, transparent);
-}
-
-.raid-stat-card--clickable.raid-stat-card--active .raid-stat-card__label,
-.raid-stat-card--clickable.raid-stat-card--active .raid-stat-card__value {
-  color: white;
-} */
- .raid-stat-card--clickable {
+.raid-stat-card--clickable {
   cursor: pointer;
   border-left: 3px solid var(--raid-color);
   border-top: 1px solid rgba(255, 255, 255, 0.08);
@@ -288,7 +271,7 @@
   height: 70px;
   margin-bottom: 8px;
   border-radius: 8px;
-  background: rgba(91, 120, 255, 0.18);
+  background: rgba(89, 94, 117, 0.15);
   border: 1px solid rgba(91, 120, 255, 0.28);
   font-size: 0.78rem;
   color: inherit;
@@ -330,11 +313,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
-
-
-
-
 
 .guild-badge {
   display: inline-flex;
@@ -409,10 +387,4 @@
   text-align: left;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.raid-calendar-last-updated {
-  font-size: 0.75rem;
-  color: #888;
-  margin-left: 0.75rem;
 }
