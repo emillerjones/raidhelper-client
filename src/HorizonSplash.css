@@ -52,6 +52,7 @@
   cursor: pointer;
   white-space: nowrap;
   transition: transform 0.15s ease, filter 0.15s ease, background 0.15s ease;
+  text-decoration: none;
 }
 
 .horizon-btn svg {

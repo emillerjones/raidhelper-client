@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import "./HorizonSplash.css";
 import HorizonNav from "./layout/Navbar";
 
@@ -125,19 +126,19 @@ export default function HorizonSplash() {
             powerful calendar so you never miss what matters.
           </p>
           <div className="horizon-cta-row">
-            <button className="horizon-btn horizon-btn-light horizon-btn-lg">
+            <Link to="/calendar" className="horizon-btn horizon-btn-light horizon-btn-lg">
               Get Started Free
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8">
                 <path d="M3 8h10M9 4l4 4-4 4" />
               </svg>
-            </button>
-            <button className="horizon-btn horizon-btn-outline horizon-btn-lg">
+            </Link>
+            <Link to="/how-it-works" className="horizon-btn horizon-btn-outline horizon-btn-lg">
               See How It Works
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <circle cx="8" cy="8" r="6.5" />
                 <path d="M6.5 5.5l4 2.5-4 2.5z" fill="currentColor" stroke="none" />
               </svg>
-            </button>
+            </Link>
           </div>
           <ul className="horizon-trust-row">
             <li>Works with any Discord server</li>
