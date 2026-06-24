@@ -158,7 +158,7 @@ export default function HowItWorks() {
   return (
     <div className="hiw-page">
       <section className="hiw-hero">
-        <p className="hiw-eyebrow">HOW IT WORKS</p>
+        {/* <p className="hiw-eyebrow">HOW IT WORKS</p> */}
         <h1 className="hiw-headline">
           Your raid week,<br />in <span className="hiw-gradient">one calendar.</span>
         </h1>

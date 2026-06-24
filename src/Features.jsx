@@ -6,7 +6,7 @@ export default function Features() {
   return (
     <div className="feat-page">
       <section className="feat-hero">
-        <p className="feat-eyebrow">FEATURES</p>
+        {/* <p className="feat-eyebrow">FEATURES</p> */}
         <h1 className="feat-headline">
           One calendar.<br />Every raid.
         </h1>

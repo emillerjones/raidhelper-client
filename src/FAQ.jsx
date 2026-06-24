@@ -137,7 +137,7 @@ export default function FAQ() {
   return (
     <div className="faq-page">
       <section className="faq-hero">
-        <p className="faq-eyebrow">FAQ</p>
+        {/* <p className="faq-eyebrow">FAQ</p> */}
         <h1 className="faq-headline">
           Common questions, <span className="faq-gradient">clear answers.</span>
         </h1>

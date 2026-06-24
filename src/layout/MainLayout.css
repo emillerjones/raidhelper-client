@@ -15,6 +15,7 @@
   background-repeat: no-repeat;
   opacity: 0.9;
   z-index: 0;
+  filter: brightness(0.75);
 }
 
 .main-layout-bg-fade {
