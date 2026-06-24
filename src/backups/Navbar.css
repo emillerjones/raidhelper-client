@@ -10,8 +10,6 @@
   left: 0;
   right: 0;
   z-index: 10;
-  max-width: 1500px;   /* add this */
-  margin: 0 auto;      /* add this */
 }
 
 .horizon-navbar-brand {
@@ -33,15 +31,32 @@
 }
 
 .horizon-navbar-links a {
+  position: relative;
   color: rgba(255, 255, 255, 0.8);
   text-decoration: none;
   font-size: 0.95rem;
   font-weight: 500;
+  padding-bottom: 6px;
   transition: color 0.2s ease;
 }
 
 .horizon-navbar-links a:hover {
   color: #fff;
+}
+
+.horizon-navbar-link-active {
+  color: #fff !important;
+}
+
+.horizon-navbar-link-active::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: #7c8cf5;
+  border-radius: 1px;
 }
 
 .horizon-navbar-actions {

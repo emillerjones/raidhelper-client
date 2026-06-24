@@ -93,12 +93,68 @@
   opacity: 0.85;
 }
 
+/* Hamburger toggle button - hidden on desktop, shown on mobile */
+.horizon-navbar-toggle {
+  display: none;
+  background: transparent;
+  border: none;
+  color: #fff;
+  padding: 6px;
+  cursor: pointer;
+}
+
+.horizon-navbar-toggle svg {
+  width: 24px;
+  height: 24px;
+}
+
+/* Mobile dropdown menu, hidden by default (only rendered when open) */
+.horizon-navbar-mobile-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem 1.25rem 1.5rem;
+  background: rgba(5, 6, 8, 0.96);
+  backdrop-filter: blur(10px);
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.horizon-navbar-mobile-menu a {
+  color: rgba(255, 255, 255, 0.85);
+  text-decoration: none;
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.75rem 0.25rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.horizon-navbar-mobile-menu a:hover,
+.horizon-navbar-mobile-menu .horizon-navbar-link-active {
+  color: #fff;
+}
+
+.horizon-navbar-mobile-menu .horizon-btn-light {
+  margin-top: 0.75rem;
+  text-align: center;
+  text-decoration: none;
+  color: #000 !important;
+}
+
 @media (max-width: 768px) {
   .horizon-navbar {
     padding: 1rem 1.25rem;
   }
 
-  .horizon-navbar-links {
+  .horizon-navbar-links,
+  .horizon-navbar-actions {
     display: none;
+  }
+
+  .horizon-navbar-toggle {
+    display: flex;
   }
 }

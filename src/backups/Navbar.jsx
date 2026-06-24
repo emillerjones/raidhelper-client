@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import horizonLogo from "../assets/horizon-logo.png";
 import "./Navbar.css";
 
@@ -18,11 +18,17 @@ export default function HorizonNav() {
       </Link>
       <nav className="horizon-navbar-links">
         {NAV_LINKS.map((link) => (
-          <Link key={link.path} to={link.path}>{link.label}</Link>
+          <NavLink
+            key={link.path}
+            to={link.path}
+            className={({ isActive }) => isActive ? "horizon-navbar-link-active" : ""}
+          >
+            {link.label}
+          </NavLink>
         ))}
       </nav>
       <div className="horizon-navbar-actions">
-        <Link to="/sign-in" className="horizon-signin">Sign In</Link>
+        {/* <Link to="/sign-in" className="horizon-signin">Sign In</Link> */}
         <Link to="/calendar" className="horizon-btn horizon-btn-light">Get Started</Link>
       </div>
     </header>
