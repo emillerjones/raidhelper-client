@@ -119,11 +119,11 @@ export default function HorizonSplash() {
         <div className="horizon-hero-copy">
           <span className="horizon-eyebrow">DISCORD EVENT CALENDAR</span>
           <h1 className="horizon-headline">
-            See everything<br />ahead.
+            Your raid week.<br />unified.
           </h1>
           <p className="horizon-subhead">
-            Horizon brings every event from your Discord communities into one
-            powerful calendar so you never miss what matters.
+            Horizon brings upcoming raids from all your Discord communities into one calendar, 
+            so you always know what's next.
           </p>
           <div className="horizon-cta-row">
             <Link to="/calendar" className="horizon-btn horizon-btn-light horizon-btn-lg">
