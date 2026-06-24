@@ -49,7 +49,7 @@ export default function Features() {
   return (
     <div className="feat-page">
       <section className="feat-hero">
-        <p className="feat-eyebrow">FEATURES</p>
+        
         <h1 className="feat-headline">
           One calendar.<br />Every raid.
         </h1>
@@ -129,8 +129,8 @@ export default function Features() {
 
       <section className="feat-stats">
         <div className="feat-stat">
-          <p className="feat-stat-value">25</p>
-          <p className="feat-stat-label">Guilds</p>
+          <p className="feat-stat-value">30+</p>
+          <p className="feat-stat-label">Active Guilds</p>
         </div>
         <div className="feat-stat-divider" />
         <div className="feat-stat">
