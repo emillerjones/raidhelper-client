@@ -102,37 +102,81 @@ function formatTime(event) {
 
 
 
+function formatLastUpdated(date) {
+  if (!date) return "";
+  return date.toLocaleTimeString([], {
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+}
+
 export default function RaidHelperEvents() {
   const [events, setEvents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGuilds, setSelectedGuilds] = useState([]);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   useEffect(() => {
+    let isMounted = true;
+
     async function fetchEvents() {
-      const res = await fetch(`${API}/api/raidhelper/imported`);
-      const data = await res.json();
+      try {
+        const res = await fetch(`${API}/api/raidhelper/imported`);
+        if (!res.ok) throw new Error(`Request failed: ${res.status}`);
+        const data = await res.json();
 
-      const mappedEvents = data.map((raid) => {
-        const raw = raid.raw_json || {};
+        const mappedEvents = data.map((raid) => {
+          const raw = raid.raw_json || {};
 
-        return {
-          ...raid,
-          startTime: raw.startTime || raid.start_time,
-          localDate: raw.localDate || getDateKeyFromTimestamp(raw.startTime || raid.start_time),
-          localTime: raw.localTime || null,
-          guildName: raw.guildName || raid.guild_name || null,
-          guildIconUrl: raw.guildIconUrl || raid.guild_icon_url || null,
-          signupCount: raw.signupCount ?? raid.signup_count,
-          signupMax: raw.signupMax ?? raid.signup_max,
-          title: raw.title || raid.title,
-        };
-      });
+          return {
+            ...raid,
+            startTime: raw.startTime || raid.start_time,
+            localDate: raw.localDate || getDateKeyFromTimestamp(raw.startTime || raid.start_time),
+            localTime: raw.localTime || null,
+            guildName: raw.guildName || raid.guild_name || null,
+            guildIconUrl: raw.guildIconUrl || raid.guild_icon_url || null,
+            signupCount: raw.signupCount ?? raid.signup_count,
+            signupMax: raw.signupMax ?? raid.signup_max,
+            title: raw.title || raid.title,
+          };
+        });
 
-      setEvents(mappedEvents);
-      console.log("Mapped raid calendar events:", mappedEvents);
+        if (isMounted) {
+          setEvents(mappedEvents);
+          setLastUpdated(new Date());
+          console.log("Mapped raid calendar events:", mappedEvents);
+        }
+      } catch (err) {
+        console.error("Failed to refresh raid events:", err);
+        // keep showing whatever events we already have rather than clearing them
+      }
     }
 
+    // initial load
     fetchEvents();
+
+    // poll every 10 minutes, but do not skip while the tab is backgrounded
+    const interval = setInterval(() => {
+      // if (!document.hidden) {
+      //   fetchEvents();
+      // }
+    }, 10 * 60 * 1000);
+
+    // refresh immediately when the tab regains focus, in case it was
+    // backgrounded for longer than the poll interval
+    function handleVisibilityChange() {
+      if (!document.hidden) {
+        fetchEvents();
+      }
+    }
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+
+    return () => {
+      isMounted = false;
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
   }, []);
 
   const [selectedRaidTypes, setSelectedRaidTypes] = useState([]);
@@ -228,6 +272,11 @@ export default function RaidHelperEvents() {
           <span className="raid-calendar-top-month">
             {today.toLocaleString("default", { month: "long" })} {year}
           </span>
+          {lastUpdated && (
+            <span className="raid-calendar-last-updated">
+              {formatLastUpdated(lastUpdated)}
+            </span>
+          )}
         </div>
 
         <div className="raid-stats-row">

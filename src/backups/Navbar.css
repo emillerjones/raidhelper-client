@@ -1,0 +1,89 @@
+.horizon-navbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2rem;
+  padding: 1.5rem 2.5rem;
+  background: transparent;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  max-width: 1500px;   /* add this */
+  margin: 0 auto;      /* add this */
+}
+
+.horizon-navbar-brand {
+  display: flex;
+  align-items: center;
+}
+
+.horizon-navbar-logo {
+  height: 28px;
+  width: auto;
+}
+
+.horizon-navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  flex: 1;
+  justify-content: center;
+}
+
+.horizon-navbar-links a {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.horizon-navbar-links a:hover {
+  color: #fff;
+}
+
+.horizon-navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.horizon-signin {
+  color: rgba(255, 255, 255, 0.8);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.horizon-signin:hover {
+  color: #fff;
+}
+
+.horizon-btn-light {
+  background: #fff;
+  color: #000;
+  border: none;
+  border-radius: 999px;
+  padding: 0.6rem 1.4rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+}
+
+.horizon-btn-light:hover {
+  opacity: 0.85;
+}
+
+@media (max-width: 768px) {
+  .horizon-navbar {
+    padding: 1rem 1.25rem;
+  }
+
+  .horizon-navbar-links {
+    display: none;
+  }
+}

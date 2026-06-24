@@ -1,6 +1,4 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import horizonLogo from "./assets/horizon-logo.png";
 import "./raidhelperevents.css";
 
 const API = import.meta.env.VITE_API;
@@ -101,10 +99,23 @@ function formatTime(event) {
   });
 }
 
+
+
+
+function formatLastUpdated(date) {
+  if (!date) return "";
+  return date.toLocaleTimeString([], {
+    hour: "numeric",
+    minute: "2-digit",
+    second: "2-digit",
+  });
+}
+
 export default function RaidHelperEvents() {
   const [events, setEvents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGuilds, setSelectedGuilds] = useState([]);
+  const [lastUpdated, setLastUpdated] = useState(null);
 
   useEffect(() => {
     let isMounted = true;
@@ -133,6 +144,7 @@ export default function RaidHelperEvents() {
 
         if (isMounted) {
           setEvents(mappedEvents);
+          setLastUpdated(new Date());
           console.log("Mapped raid calendar events:", mappedEvents);
         }
       } catch (err) {
@@ -243,17 +255,28 @@ export default function RaidHelperEvents() {
 
   const totalRaidsThisWeek = eventsInWeek.length;
 
+
+
+
+
+
+
+
+
   return (
     <main className="raid-calendar-page">
 
       <div className="raid-calendar-top">
         <div className="raid-calendar-top-label">
-          <Link to="/" className="raid-calendar-brand-link">
-            <img src={horizonLogo} alt="Horizon" className="raid-calendar-logo" />
-          </Link>
+          <span className="raid-calendar-brand">Raid Calendar</span>
           <span className="raid-calendar-top-month">
             {today.toLocaleString("default", { month: "long" })} {year}
           </span>
+          {lastUpdated && (
+            <span className="raid-calendar-last-updated">
+              {formatLastUpdated(lastUpdated)}
+            </span>
+          )}
         </div>
 
         <div className="raid-stats-row">
@@ -305,6 +328,10 @@ export default function RaidHelperEvents() {
 
       <div className="raid-calendar-layout">
         <aside className="raid-calendar-sidebar">
+          {/* <h2 className="raid-calendar-month">
+            {today.toLocaleString("default", { month: "long" })} {year}
+          </h2> */}
+
           <div className="raid-calendar-search-wrap">
             <input
               className="raid-calendar-search"
@@ -365,6 +392,8 @@ export default function RaidHelperEvents() {
             <div className="raid-calendar__day" key={index}>
               {day && (
                 <>
+                  {/* <div className="raid-calendar__date">{day.getDate()}</div> */}
+
                   {eventsForDay(day).map((event) => (
                     <a
                       className="raid-calendar__event"
