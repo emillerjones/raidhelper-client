@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./HorizonSplash.css";
-import HorizonNav from "./HorizonNav";
+import HorizonNav from "./layout/NavBar";
 
 const IFRAME_NATURAL_WIDTH = 1600;
 const IFRAME_NATURAL_HEIGHT = 900;
