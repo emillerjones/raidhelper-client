@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import "./HorizonSplash.css";
-import earthBg from "./assets/earth-bg.jpg";
-// import HorizonNav from "./layout/Navbar.jsx";
+import HorizonNav from "./layout/Navbar";
 
 const IFRAME_NATURAL_WIDTH = 1600;
 const IFRAME_NATURAL_HEIGHT = 900;
@@ -9,7 +9,7 @@ const IFRAME_NATURAL_HEIGHT = 900;
 const FEATURES = [
   {
     title: "Unified Calendar",
-    desc: "All your Discord communities in one place. See every event in a single, convenient view.",
+    desc: "All your Discord communities in one place. See every event in a single, beautiful view.",
     icon: "calendar",
   },
   {
@@ -97,7 +97,7 @@ const LiveCalendarPreview = () => {
   return (
     <div className="horizon-app-iframe-wrap" ref={wrapRef}>
       <iframe
-        src="https://raidhelper-client.vercel.app/"
+        src="https://raidhelper-client.vercel.app/calendar"
         title="Raid Calendar live preview"
         className="horizon-app-iframe"
         style={{
@@ -114,41 +114,31 @@ const LiveCalendarPreview = () => {
 export default function HorizonSplash() {
   return (
     <div className="horizon-page">
-      {/* Earth photo background */}
-      <div
-        className="horizon-hero-bg"
-        style={{ backgroundImage: `url(${earthBg})` }}
-        aria-hidden="true"
-      />
-      <div className="horizon-hero-bg-fade" aria-hidden="true" />
-
-      {/* <HorizonNav /> */}
-
       {/* Hero */}
       <section className="horizon-hero">
         <div className="horizon-hero-copy">
           <span className="horizon-eyebrow">DISCORD EVENT CALENDAR</span>
           <h1 className="horizon-headline">
-            Your raid week<br />in one calendar.
+            Your raid week<br />in one view
           </h1>
           <p className="horizon-subhead">
-            Horizon brings upcoming raids from all your Discord communities
-            into one calendar, so you always know what's next.
+            Horizon brings upcoming raids from all your Discord communities into one calendar, 
+            so you always know what's next.
           </p>
           <div className="horizon-cta-row">
-            <button className="horizon-btn horizon-btn-light horizon-btn-lg">
+            <Link to="/calendar" className="horizon-btn horizon-btn-light horizon-btn-lg">
               Get Started Free
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8">
                 <path d="M3 8h10M9 4l4 4-4 4" />
               </svg>
-            </button>
-            <button className="horizon-btn horizon-btn-outline horizon-btn-lg">
+            </Link>
+            <Link to="/how-it-works" className="horizon-btn horizon-btn-outline horizon-btn-lg">
               See How It Works
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <circle cx="8" cy="8" r="6.5" />
                 <path d="M6.5 5.5l4 2.5-4 2.5z" fill="currentColor" stroke="none" />
               </svg>
-            </button>
+            </Link>
           </div>
           <ul className="horizon-trust-row">
             <li>Works with any Discord server</li>

@@ -51,8 +51,12 @@
   border: none;
   cursor: pointer;
   white-space: nowrap;
-  transition: transform 0.15s ease, filter 0.15s ease, background 0.15s ease;
   text-decoration: none;
+  transition: transform 0.15s ease, filter 0.15s ease, background 0.15s ease;
+}
+
+.horizon-btn:visited {
+  color: inherit;
 }
 
 .horizon-btn svg {
@@ -102,17 +106,15 @@
   z-index: 1;
   max-width: 1500px;
   margin: 0 auto;
-  padding: 38px 46px 0;
+  padding: 48px 56px 0;
   display: grid;
   grid-template-columns: minmax(380px, 480px) 1fr;
   gap: 20px;
   align-items: start;
-  padding-top:100px;
 }
 
 .horizon-hero-copy {
   padding-top: 56px;
-  
 }
 
 .horizon-eyebrow {
@@ -176,8 +178,6 @@
 .horizon-app-frame {
   position: relative;
   padding: 28px;
-  /* schooch the calender down */
-  padding-top:50px;
 }
 
 .horizon-app-glow {
@@ -195,12 +195,17 @@
   aspect-ratio: 16 / 9;
   overflow: hidden;
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.224);
+  border: 1px solid rgba(255, 255, 255, 0.06);
   background: #05070a;
   box-shadow:
     0 20px 50px -25px rgba(0, 0, 0, 0.6),
     0 0 0 1px rgba(255, 255, 255, 0.03) inset;
-    filter: brightness(0.75);
+  /* The preview already auto-scales to fit its container, so manual
+     pinch-zoom serves no purpose here — and on iOS Safari, zooming over
+     a transform-scaled iframe has been observed to break its navigation
+     state. Disabling pinch-zoom specifically over this element avoids
+     the conflict without affecting zoom on the rest of the page. */
+  touch-action: pan-y;
 }
 
 .horizon-app-iframe {

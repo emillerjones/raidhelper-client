@@ -28,7 +28,6 @@
   --font-display: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
 
   position: relative;
-  background: var(--bg);
   color: var(--text);
   font-family: var(--font-display);
   overflow-x: hidden;
@@ -37,33 +36,6 @@
 
 .horizon-page * {
   box-sizing: border-box;
-}
-
-/* ===== Earth photo background ===== */
-.horizon-hero-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 820px;
-  background-size: cover;
-  background-position: center top;
-  background-repeat: no-repeat;
-  opacity: 0.9;
-  z-index: 0;
-}
-
-.horizon-hero-bg-fade {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 820px;
-  background:
-    linear-gradient(180deg, rgba(5,6,8,0.1) 0%, rgba(5,6,8,0.05) 35%, rgba(5,6,8,0.45) 75%, var(--bg) 100%),
-    linear-gradient(90deg, rgba(5,6,8,0.3) 0%, rgba(5,6,8,0) 30%, rgba(5,6,8,0) 70%, rgba(5,6,8,0.3) 100%);
-  z-index: 0;
-  pointer-events: none;
 }
 
 /* ===== Buttons ===== */
@@ -80,6 +52,7 @@
   cursor: pointer;
   white-space: nowrap;
   transition: transform 0.15s ease, filter 0.15s ease, background 0.15s ease;
+  text-decoration: none;
 }
 
 .horizon-btn svg {
@@ -129,16 +102,17 @@
   z-index: 1;
   max-width: 1500px;
   margin: 0 auto;
-  padding: 48px 56px 0;
+  padding: 38px 46px 0;
   display: grid;
   grid-template-columns: minmax(380px, 480px) 1fr;
   gap: 20px;
   align-items: start;
-  padding-top: 100px;
+  padding-top:100px;
 }
 
 .horizon-hero-copy {
   padding-top: 56px;
+  
 }
 
 .horizon-eyebrow {
@@ -153,7 +127,6 @@
   margin-bottom: 28px;
   background: rgba(5,6,8,0.4);
   backdrop-filter: blur(4px);
-  
 }
 
 .horizon-headline {
@@ -202,9 +175,9 @@
 /* ===== App preview, live iframe embed of the real app ===== */
 .horizon-app-frame {
   position: relative;
-  padding-left: 5px;
-  padding-top: 50px;
-  filter: brightness(0.70)
+  padding: 28px;
+  /* schooch the calender down */
+  padding-top:50px;
 }
 
 .horizon-app-glow {
@@ -221,14 +194,13 @@
   /* 16:9-ish viewport ratio for the real app; adjust if its real layout differs */
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  /* border-radius: var(--radius-lg); */
-  border-radius:8px;
-  border: 1px solid rgba(255, 255, 255, 0.194);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.224);
   background: #05070a;
   box-shadow:
     0 20px 50px -25px rgba(0, 0, 0, 0.6),
     0 0 0 1px rgba(255, 255, 255, 0.03) inset;
-    
+    filter: brightness(0.75);
 }
 
 .horizon-app-iframe {
@@ -238,7 +210,7 @@
   border: none;
   transform-origin: top left;
   pointer-events: auto;
-  
+  filter: brightness(0.85);
 }
 
 /* ===== Feature strip ===== */

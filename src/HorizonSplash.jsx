@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
 import "./HorizonSplash.css";
-import HorizonNav from "./layout/Navbar";
+import HorizonNav from "./HorizonNav";
 
 const IFRAME_NATURAL_WIDTH = 1600;
 const IFRAME_NATURAL_HEIGHT = 900;
@@ -81,17 +80,31 @@ const LiveCalendarPreview = () => {
     const el = wrapRef.current;
     if (!el) return;
 
+    // Throttled so pinch-zoom on mobile (which fires a flood of resize
+    // events mid-gesture) doesn't repeatedly re-apply transform: scale()
+    // to the iframe while the browser's own native zoom transform is
+    // also actively changing — two transform systems fighting over the
+    // same element has been observed to break the iframe's navigation
+    // state on iOS Safari ("Can't open this page").
+    let rafId = null;
     const updateScale = () => {
-      const width = el.offsetWidth;
-      if (width > 0) {
-        setScale(width / IFRAME_NATURAL_WIDTH);
-      }
+      if (rafId) return;
+      rafId = requestAnimationFrame(() => {
+        rafId = null;
+        const width = el.offsetWidth;
+        if (width > 0) {
+          setScale(width / IFRAME_NATURAL_WIDTH);
+        }
+      });
     };
 
     updateScale();
     const observer = new ResizeObserver(updateScale);
     observer.observe(el);
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, []);
 
   return (
@@ -119,26 +132,26 @@ export default function HorizonSplash() {
         <div className="horizon-hero-copy">
           <span className="horizon-eyebrow">DISCORD EVENT CALENDAR</span>
           <h1 className="horizon-headline">
-            Your raid week<br />in one view
+            See everything<br />ahead.
           </h1>
           <p className="horizon-subhead">
-            Horizon brings upcoming raids from all your Discord communities into one calendar, 
-            so you always know what's next.
+            Horizon brings every event from your Discord communities into one
+            powerful calendar so you never miss what matters.
           </p>
           <div className="horizon-cta-row">
-            <Link to="/calendar" className="horizon-btn horizon-btn-light horizon-btn-lg">
+            <button className="horizon-btn horizon-btn-light horizon-btn-lg">
               Get Started Free
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.8">
                 <path d="M3 8h10M9 4l4 4-4 4" />
               </svg>
-            </Link>
-            <Link to="/how-it-works" className="horizon-btn horizon-btn-outline horizon-btn-lg">
+            </button>
+            <button className="horizon-btn horizon-btn-outline horizon-btn-lg">
               See How It Works
               <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
                 <circle cx="8" cy="8" r="6.5" />
                 <path d="M6.5 5.5l4 2.5-4 2.5z" fill="currentColor" stroke="none" />
               </svg>
-            </Link>
+            </button>
           </div>
           <ul className="horizon-trust-row">
             <li>Works with any Discord server</li>
