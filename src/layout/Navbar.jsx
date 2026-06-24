@@ -28,7 +28,7 @@ export default function HorizonNav() {
         ))}
       </nav>
       <div className="horizon-navbar-actions">
-        <Link to="/sign-in" className="horizon-signin">Sign In</Link>
+        {/* <Link to="/sign-in" className="horizon-signin">Sign In</Link> */}
         <Link to="/calendar" className="horizon-btn horizon-btn-light">Get Started</Link>
       </div>
     </header>
