@@ -1,6 +1,49 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Link } from "react-router-dom";
 import "./Features.css";
+
+const DESKTOP_IFRAME_WIDTH = 1600;
+const DESKTOP_IFRAME_HEIGHT = 900;
+const MOBILE_IFRAME_WIDTH = 390;
+const MOBILE_IFRAME_HEIGHT = 780;
+
+function LiveFrame({ kind }) {
+  const wrapRef = useRef(null);
+  const [scale, setScale] = useState(0.5);
+  const naturalWidth = kind === "mobile" ? MOBILE_IFRAME_WIDTH : DESKTOP_IFRAME_WIDTH;
+  const naturalHeight = kind === "mobile" ? MOBILE_IFRAME_HEIGHT : DESKTOP_IFRAME_HEIGHT;
+
+  useEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+
+    const updateScale = () => {
+      const width = el.offsetWidth;
+      if (width > 0) setScale(width / naturalWidth);
+    };
+
+    updateScale();
+    const observer = new ResizeObserver(updateScale);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [naturalWidth]);
+
+  return (
+    <div className={kind === "mobile" ? "feat-iframe-wrap feat-iframe-wrap-mobile" : "feat-iframe-wrap feat-iframe-wrap-desktop"} ref={wrapRef}>
+      <iframe
+        src="https://raidhelper-client.vercel.app/calendar"
+        title={kind === "mobile" ? "Horizon mobile calendar, live" : "Horizon desktop calendar, live"}
+        className="feat-iframe"
+        style={{
+          width: `${naturalWidth}px`,
+          height: `${naturalHeight}px`,
+          transform: `scale(${scale})`,
+        }}
+        loading="lazy"
+      />
+    </div>
+  );
+}
 
 export default function Features() {
   return (
@@ -41,6 +84,41 @@ export default function Features() {
             extension scans for them and keeps the calendar in sync — no
             manual data entry, ever.
           </p>
+        </div>
+      </section>
+
+      <section className="feat-screens">
+        <div className="feat-screens-heading">
+          <p className="feat-screens-label">The same calendar, on every screen</p>
+          <span className="feat-live-badge">
+            <span className="feat-live-dot" />
+            Live
+          </span>
+        </div>
+        <p className="feat-screens-sub">This is the real app — try clicking around.</p>
+        <div className="feat-screens-row">
+          <div className="feat-screen feat-screen-desktop">
+            <LiveFrame kind="desktop" />
+            <p className="feat-screen-caption">Full week, every guild — desktop</p>
+          </div>
+          <div className="feat-screen feat-screen-mobile">
+            <LiveFrame kind="mobile" />
+            <p className="feat-screen-caption">Swipe day to day — mobile</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="feat-filters">
+        <p className="feat-filters-label">Filter by guild, raid type, or both at once</p>
+        <div className="feat-filters-row">
+          <div className="feat-filter-shot">
+            <img src="/images/filter-guild-screenshot.png" alt="Filtering the calendar by multiple guilds at once" />
+            <p className="feat-filter-caption">Select multiple guilds</p>
+          </div>
+          <div className="feat-filter-shot">
+            <img src="/images/filter-raidtype-screenshot.png" alt="Filtering the calendar by raid type" />
+            <p className="feat-filter-caption">Narrow by raid type</p>
+          </div>
         </div>
       </section>
 
@@ -86,6 +164,20 @@ export default function Features() {
           <p>
             Raid sizes, lockouts, and schedules that match how Classic Era
             guilds actually run — not a generic event calendar.
+          </p>
+        </div>
+
+        <div className="feat-card">
+          <span className="feat-icon-wrap feat-icon-coral">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
+              <path d="M14 5h5v5M19 5 10 14" />
+              <path d="M19 13v5a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h5" />
+            </svg>
+          </span>
+          <h3>One click to sign up</h3>
+          <p>
+            Click any raid and jump straight to its Discord signup post —
+            no hunting through channels to find it.
           </p>
         </div>
 

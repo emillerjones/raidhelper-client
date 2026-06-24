@@ -18,24 +18,24 @@ const EXTENSION_STEPS = [
 ];
 
 const SCAN_STATS = [
-  { value: "2", label: "Raids found" },
-  { value: "0", label: "New" },
-  { value: "2", label: "Updated" },
-  { value: "1", label: "Servers scanned" },
+  { value: "165", label: "Raids found" },
+  { value: "5", label: "New" },
+  { value: "160", label: "Updated" },
+  { value: "26", label: "Servers scanned" },
 ];
 
 const SCAN_ENTRIES = [
   {
     title: "Ony 6PM ZG to follow",
     date: "6/17/2026, 5:00:00 PM",
-    leader: "ltsQueenB",
+    leader: "Flo",
     signups: "20/24 signups",
     softres: "dptcbu",
   },
   {
     title: "ZG right after Ony so probably 6:20PM",
     date: "6/17/2026, 5:30:00 PM",
-    leader: "ltsQueenB",
+    leader: "Flo",
     signups: "20/23 signups",
     softres: "uozahq",
   },
@@ -236,7 +236,7 @@ export default function HowItWorks() {
 
           <div className="hiw-mock-scanner">
             <div className="hiw-scanner-header">
-              Current-server scan complete: <span className="hiw-scanner-guild">LetsGua</span>
+              Current-server scan complete: <span className="hiw-scanner-guild"></span>
             </div>
 
             <div className="hiw-scanner-stats">

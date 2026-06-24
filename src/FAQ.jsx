@@ -49,7 +49,7 @@ const FAQS = [
   },
   {
     q: "Is Horizon free?",
-    a: "Yes. Horizon is currently free to use.",
+    a: "Yes. Horizon is completely free to use.",
     icon: "check",
   },
   {
