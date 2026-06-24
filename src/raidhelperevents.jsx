@@ -104,13 +104,18 @@ function formatTime(event) {
   });
 }
 
-// Single event card, shared between the desktop grid and the mobile day view
-function EventCard({ event, allGuildNames }) {
+// Single event card, shared between the desktop grid and the mobile day view.
+// `isMobile` controls whether the link opens in a new tab: on iOS, opening a
+// Discord Universal Link via target="_blank" can fail to hand off the
+// guild/channel path correctly to the native app, so mobile uses a normal
+// same-tab navigation instead. Desktop keeps target="_blank" since there's
+// no such handoff issue there.
+function EventCard({ event, allGuildNames, isMobile }) {
   return (
     <a
       className="raid-calendar__event"
       href={`https://discord.com/channels/${event.guild_id}/${event.channel_id}`}
-      target="_blank"
+      target={isMobile ? undefined : "_blank"}
       rel="noreferrer"
     >
       <div className="raid-calendar__event-icon">
@@ -212,6 +217,7 @@ function MobileDayCarousel({ calendarDays, eventsForDay, allGuildNames }) {
                       key={event.raidhelper_event_id}
                       event={event}
                       allGuildNames={allGuildNames}
+                      isMobile
                     />
                   ))
                 )}
@@ -516,6 +522,7 @@ export default function RaidHelperEvents() {
                         key={event.raidhelper_event_id}
                         event={event}
                         allGuildNames={allGuildNames}
+                        isMobile={isMobile}
                       />
                     ))}
                   </>
