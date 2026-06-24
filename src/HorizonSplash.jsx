@@ -96,7 +96,7 @@ const LiveCalendarPreview = () => {
   return (
     <div className="horizon-app-iframe-wrap" ref={wrapRef}>
       <iframe
-        src="https://raidhelper-client.vercel.app/"
+        src="https://raidhelper-client.vercel.app/calendar"
         title="Raid Calendar live preview"
         className="horizon-app-iframe"
         style={{
