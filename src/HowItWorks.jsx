@@ -140,7 +140,7 @@ const LiveCalendarPreview = () => {
   return (
     <div className="hiw-iframe-wrap" ref={wrapRef}>
       <iframe
-        src="https://raidhelper-client.vercel.app/"
+        src="https://raidhelper-client.vercel.app/calendar"
         title="Raid Calendar live preview"
         className="hiw-iframe"
         style={{
