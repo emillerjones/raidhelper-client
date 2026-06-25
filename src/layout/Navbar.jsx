@@ -7,6 +7,7 @@ const NAV_LINKS = [
   { label: "Raid Calendar", path: "/calendar" },
   { label: "Features", path: "/features" },
   { label: "How It Works", path: "/how-it-works" },
+  { label: "Stats", path: "/stats" },
   { label: "FAQ", path: "/faq" },
 ];
 

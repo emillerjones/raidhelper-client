@@ -231,7 +231,7 @@
   border: none;
   transform-origin: top left;
   pointer-events: auto;
-  filter: brightness(0.85);
+  filter: brightness(0.75);
 }
 
 /* ===== Feature strip ===== */

@@ -4,6 +4,7 @@ import RaidHelperEvents from "./raidhelperevents";
 import MainLayout from "./layout/MainLayout";
 import AppLayout from "./layout/AppLayout";
 import HorizonSplash from "./HorizonSplash";
+import Stats from "./Guilds";
 import HowItWorks from "./HowItWorks";
 import Features from "./Features";
 import FAQ from "./FAQ";
@@ -21,6 +22,10 @@ export default function App() {
 
       <Route element={<MainLayout heroHeight="820px" />}>
         <Route path="/features" element={<Features />} />
+      </Route>
+
+      <Route element={<MainLayout heroHeight="820px" />}>
+        <Route path="/stats" element={<Stats />} />
       </Route>
 
       <Route element={<MainLayout heroHeight="820px" />}>
