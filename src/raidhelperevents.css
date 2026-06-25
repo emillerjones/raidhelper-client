@@ -275,6 +275,10 @@
   font-size: 0.78rem;
   color: inherit;
   text-decoration: none;
+  border: none;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
 }
 
 .raid-calendar__event:hover {

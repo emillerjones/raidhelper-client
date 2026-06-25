@@ -104,6 +104,28 @@ function formatTime(event) {
   });
 }
 
+
+// function openDiscordChannel(guildId, channelId) {
+//   const webUrl = `https://discord.com/channels/${guildId}/${channelId}`;
+//   // const appUrl = `discord://discord.com/channels/${guildId}/${channelId}`;
+//   const appUrl = `discord:///channels/${guildId}/${channelId}`;
+//   window.location.href = appUrl;
+
+//   setTimeout(() => {
+//     window.open(webUrl, "_blank", "noreferrer");
+//   }, 800);
+// }
+function openDiscordChannel(guildId, channelId) {
+  const webUrl = `https://discord.com/channels/${guildId}/${channelId}`;
+  const appUrl = `discord:///channels/${guildId}/${channelId}`;
+
+  window.open(webUrl, "_blank", "noreferrer");
+
+  setTimeout(() => {
+    window.location.href = appUrl;
+  }, 300);
+}
+
 // Single event card, shared between the desktop grid and the mobile day view.
 // `isMobile` controls whether the link opens in a new tab: on iOS, opening a
 // Discord Universal Link via target="_blank" can fail to hand off the
@@ -112,12 +134,17 @@ function formatTime(event) {
 // no such handoff issue there.
 function EventCard({ event, allGuildNames, isMobile }) {
   return (
-    <a
-      className="raid-calendar__event"
-      href={`https://discord.com/channels/${event.guild_id}/${event.channel_id}`}
-      target={isMobile ? undefined : "_blank"}
-      rel="noreferrer"
-    >
+    // <a
+    //   className="raid-calendar__event"
+    //   href={`https://discord.com/channels/${event.guild_id}/${event.channel_id}`}
+    //   target={isMobile ? undefined : "_blank"}
+    //   rel="noreferrer"
+    // >
+      <button
+        type="button"
+        className="raid-calendar__event"
+        onClick={() => openDiscordChannel(event.guild_id, event.channel_id)}
+      >
       <div className="raid-calendar__event-icon">
         <GuildBadge
           guildName={event.guildName}
@@ -130,7 +157,8 @@ function EventCard({ event, allGuildNames, isMobile }) {
         <span>{event.guildName}</span>
         <span>{event.raid_name || event.title}</span>
       </div>
-    </a>
+
+    </button>
   );
 }
 
@@ -158,6 +186,9 @@ function MobileDayCarousel({ calendarDays, eventsForDay, allGuildNames }) {
   const scrollNext = useCallback(() => emblaApi && emblaApi.scrollNext(), [emblaApi]);
 
   const activeDay = calendarDays[selectedIndex];
+
+
+
 
   return (
     <div className="raid-mobile-day-view">
