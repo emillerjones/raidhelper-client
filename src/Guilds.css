@@ -50,18 +50,7 @@
   margin: 0;
 }
 
-/* .guilds-stats-card {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 40px;
-  background: var(--panel);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 20px 40px;
-  margin-bottom: 20px;
-} */
- .guilds-stats-card {
+.guilds-stats-card {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -76,6 +65,8 @@
 
 .guilds-stat {
   text-align: center;
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .guilds-stat-value {
@@ -359,9 +350,14 @@
     font-size: 28px;
   }
   .guilds-stats-card {
-    gap: 16px;
-    padding: 16px;
-    flex-wrap: wrap;
+    gap: 10px;
+    padding: 14px 12px;
+  }
+  .guilds-stat-value {
+    font-size: 21px;
+  }
+  .guilds-stat-label {
+    font-size: 10.5px;
   }
   .guilds-table-head {
     display: none;
@@ -403,5 +399,4 @@
     grid-template-columns: 1fr;
     gap: 4px;
   }
-
 }
