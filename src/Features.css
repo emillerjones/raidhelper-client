@@ -316,6 +316,8 @@
 .feat-stat-divider {
   width: 1px;
   height: 36px;
+  margin-left: 15px;
+  margin-right: 15px;
   background: var(--border-soft);
 }
 
@@ -458,10 +460,10 @@
     gap: 16px;
     text-align: center;
   }
-  .feat-stat-divider {
+  /* .feat-stat-divider {
     width: 36px;
     height: 1px;
-  }
+  } */
   .feat-stat-note {
     max-width: none;
   }
