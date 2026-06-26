@@ -12,7 +12,7 @@ const RAID_KEYWORDS = {
   Ony: ["ony", "onyxia"],
   MC: ["molten core", "mc", "molten", "core"],
   BWL: ["bwl", "blackwing lair", "blackwing"],
-  AQ40: ["aq40", "aq 40", "temple of ahn'qiraj", "ouro", "cthun"],
+  AQ40: ["aq40", "aq 40", "temple of ahn'qiraj", "ouro", "cthun", "aq-40"],
   Naxx: ["naxx", "naxxramas"],
 };
 

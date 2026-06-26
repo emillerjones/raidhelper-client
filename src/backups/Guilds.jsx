@@ -162,7 +162,6 @@ export default function Guilds() {
   return (
     <div className="guilds-page">
       <section className="guilds-hero">
-
         <h1 className="guilds-headline">
           Every guild, <span className="guilds-gradient">at a glance.</span>
         </h1>
@@ -174,7 +173,7 @@ export default function Guilds() {
       <section className="guilds-stats-card">
         <div className="guilds-stat">
           <p className="guilds-stat-value">{guilds.length}</p>
-          <p className="guilds-stat-label">Guilds Represented</p>
+          <p className="guilds-stat-label">Guilds</p>
         </div>
         <div className="guilds-stat-divider" />
         <div className="guilds-stat">
@@ -207,17 +206,12 @@ export default function Guilds() {
 
                   <div className="guilds-row-identity">
                     <span className="guilds-row-name">{guild.guildName || "Unknown guild"}</span>
-                    
+                    <span className="guilds-row-week">{guild.raidsThisWeek} raid{guild.raidsThisWeek === 1 ? "" : "s"} this week</span>
                   </div>
 
-                  <div className="guilds-row-total">                    
-                    <span className="guilds-row-total-value">{guild.raidsThisWeek} </span>
-                    <span className="guilds-row-total-label">This week</span>
-                  </div>
-
-                  <div className="guilds-row-total">                    
+                  <div className="guilds-row-total">
                     <span className="guilds-row-total-value">{guild.raids.length}</span>
-                    <span className="guilds-row-total-label">Total</span>
+                    <span className="guilds-row-total-label">total raids</span>
                   </div>
 
                   {guild.nextRaid ? (
@@ -247,24 +241,37 @@ export default function Guilds() {
                   <div className="guilds-row-body">
                     {guild.raids
                       .slice()
-                      // .sort((a, b) => new Date(a.startTime || a.start_time) - new Date(b.startTime || b.start_time))
                       .sort((a, b) => new Date(b.startTime || b.start_time) - new Date(a.startTime || a.start_time))
-                      .map((raid) => (
-                        <a
-                          key={raid.raidhelper_event_id}
-                          className="guilds-raid-item"
-                          href={`https://discord.com/channels/${raid.guild_id}/${raid.channel_id}`}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          <span className="guilds-raid-name">{raid.raid_name || raid.title}</span>
-                          <span className="guilds-raid-date">
-                            {new Date(raid.startTime || raid.start_time).toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" })}
-                            {" · "}
-                            {new Date(raid.startTime || raid.start_time).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
-                          </span>
-                        </a>
-                      ))}
+                      .map((raid) => {
+                        const raidType = matchRaidType(raid.raid_name || raid.title);
+                        const signupCount = raid.signup_count ?? raid.raw_json?.signupCount ?? "?";
+                        const signupMax = raid.signup_max ?? raid.raw_json?.signupMax ?? "?";
+
+                        return (
+                          <a
+                            key={raid.raidhelper_event_id}
+                            className="guilds-raid-item"
+                            href={`https://discord.com/channels/${raid.guild_id}/${raid.channel_id}`}
+                            target="_blank"
+                            rel="noreferrer"
+                          >
+                            <span
+                              className="guilds-raid-type"
+                              style={{ "--raid-color": RAID_COLORS[raidType] }}
+                            >
+                              {raidType}
+                            </span>
+                            <span className="guilds-raid-name">{raid.raid_name || raid.title}</span>
+                            <span className="guilds-raid-leader">{raid.raid_leader ?? "Unknown"}</span>
+                            <span className="guilds-raid-signups">{signupCount}/{signupMax}</span>
+                            <span className="guilds-raid-date">
+                              {new Date(raid.startTime || raid.start_time).toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" })}
+                              {" · "}
+                              {new Date(raid.startTime || raid.start_time).toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}
+                            </span>
+                          </a>
+                        );
+                      })}
                   </div>
                 )}
               </div>
