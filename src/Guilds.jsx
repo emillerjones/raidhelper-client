@@ -233,8 +233,14 @@ export default function Guilds() {
                     <span className="guilds-row-name">{guild.guildName || "Unknown guild"}</span>
                   </div>
 
-                  <span className="guilds-row-week-value">{guild.raidsThisWeek}</span>
-                  <span className="guilds-row-total-value">{guild.raids.length}</span>
+                  {/* <span className="guilds-row-week-value">{guild.raidsThisWeek} this week</span> */}
+                  <span className="guilds-row-week-value">
+                    {guild.raids.length}<span className="guilds-stat-label"> this week </span>
+                  </span>
+                  {/* <span className="guilds-row-total-value">{guild.raids.length}<span></span> total</span> */}
+                  <span className="guilds-row-total-value">
+                    {guild.raids.length}<span className="guilds-stat-label"> total </span>
+                  </span>
 
                   {guild.nextRaid ? (
                     <a
