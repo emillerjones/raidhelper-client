@@ -183,14 +183,17 @@ export default function Guilds() {
           <p className="guilds-stat-value">{totalGuilds}</p>
           <p className="guilds-stat-label">Guilds</p>
         </div>
+        <div className="feat-stat-divider" />
         <div className="guilds-stat">
           <p className="guilds-stat-value">{totalRaids}</p>
           <p className="guilds-stat-label">Raids tracked</p>
         </div>
+        <div className="feat-stat-divider" />
         <div className="guilds-stat">
           <p className="guilds-stat-value">{totalRaidsThisWeek}</p>
           <p className="guilds-stat-label">This week</p>
         </div>
+        <div className="feat-stat-divider" />
         <div className="guilds-stat">
           <p className="guilds-stat-value">{totalRaidsToday}</p>
           <p className="guilds-stat-label">Today</p>
@@ -233,32 +236,35 @@ export default function Guilds() {
                     <span className="guilds-row-name">{guild.guildName || "Unknown guild"}</span>
                   </div>
 
-                  {/* <span className="guilds-row-week-value">{guild.raidsThisWeek} this week</span> */}
-                  <span className="guilds-row-week-value">
-                    {guild.raids.length}<span className="guilds-stat-label"> this week </span>
-                  </span>
-                  {/* <span className="guilds-row-total-value">{guild.raids.length}<span></span> total</span> */}
-                  <span className="guilds-row-total-value">
-                    {guild.raids.length}<span className="guilds-stat-label"> total </span>
-                  </span>
+                  <div className="guilds-row-stats">
 
-                  {guild.nextRaid ? (
-                    <a
-                      className="guilds-row-next"
-                      style={{ "--raid-color": nextRaidColor }}
-                      href={`https://discord.com/channels/${guild.nextRaid.guild_id}/${guild.nextRaid.channel_id}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <span className="guilds-row-next-badge">{nextRaidType}</span>
-                      <span className="guilds-row-next-time">
-                        {formatRelativeRaidTime(new Date(guild.nextRaid.startTime || guild.nextRaid.start_time))}
-                      </span>
-                    </a>
-                  ) : (
-                    <span className="guilds-row-next guilds-row-next--empty">No upcoming raid</span>
-                  )}
+                    {/* <span className="guilds-row-week-value">{guild.raidsThisWeek} this week</span> */}
+                    <span className="guilds-row-week-value">
+                      {guild.raidsThisWeek}<span className="guilds-stat-label">  this week </span>
+                    </span>
+                    {/* <span className="guilds-row-total-value">{guild.raids.length}<span></span> total</span> */}
+                    <span className="guilds-row-total-value">
+                      {guild.raids.length}<span className="guilds-stat-label">  total </span>
+                    </span>
+
+                    {guild.nextRaid ? (
+                      <a
+                        className="guilds-row-next"
+                        style={{ "--raid-color": nextRaidColor }}
+                        href={`https://discord.com/channels/${guild.nextRaid.guild_id}/${guild.nextRaid.channel_id}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <span className="guilds-row-next-badge">{nextRaidType}</span>
+                        <span className="guilds-row-next-time">
+                          {formatRelativeRaidTime(new Date(guild.nextRaid.startTime || guild.nextRaid.start_time))}
+                        </span>
+                      </a>
+                    ) : (
+                      <span className="guilds-row-next guilds-row-next--empty">No upcoming raid</span>
+                    )}
+                  </div>
 
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="guilds-row-chevron">
                     <path d="M6 9l6 6 6-6" />

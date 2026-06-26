@@ -136,7 +136,7 @@
 .guilds-row-header {
   width: 100%;
   display: grid;
-  grid-template-columns: 2fr 0.8fr 0.8fr 1.6fr 20px;
+  grid-template-columns: 2fr 3.2fr 20px;
   align-items: center;
   gap: 12px;
   background: transparent;
@@ -146,6 +146,13 @@
   font-family: inherit;
   color: var(--text);
   text-align: left;
+}
+
+.guilds-row-stats {
+  display: grid;
+  grid-template-columns: 0.8fr 0.8fr 1.6fr;
+  align-items: center;
+  gap: 12px;
 }
 
 .guilds-row-header:hover {
@@ -348,12 +355,34 @@
     display: none;
   }
   .guilds-row-header {
-    grid-template-columns: 1fr;
-    gap: 8px;
+    grid-template-columns: 1fr auto;
+    grid-template-areas:
+      "identity chevron"
+      "stats stats";
+    align-items: center;
+    row-gap: 8px;
+    column-gap: 8px;
+  }
+  .guilds-row-identity {
+    grid-area: identity;
+  }
+  .guilds-row-chevron {
+    grid-area: chevron;
+    justify-self: end;
+  }
+  .guilds-row-stats {
+    grid-area: stats;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 14px;
   }
   .guilds-row-week-value,
   .guilds-row-total-value {
     display: inline;
+  }
+  .guilds-row-next {
+    flex-wrap: nowrap;
   }
   .guilds-raid-head {
     display: none;
