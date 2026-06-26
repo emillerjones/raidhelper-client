@@ -50,7 +50,7 @@
   margin: 0;
 }
 
-.guilds-stats-card {
+/* .guilds-stats-card {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -60,6 +60,18 @@
   border-radius: var(--radius-lg);
   padding: 20px 40px;
   margin-bottom: 20px;
+} */
+ .guilds-stats-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 40px;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px 40px;
+  margin-bottom: 20px;
+  flex-wrap: nowrap;
 }
 
 .guilds-stat {
