@@ -58,8 +58,8 @@
   background: var(--panel);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: 20px 40px;
-  margin-bottom: 20px;
+  padding: 15px 40px;
+  margin-bottom: 15px;
   flex-wrap: nowrap;
 }
 

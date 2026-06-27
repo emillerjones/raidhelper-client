@@ -219,7 +219,7 @@
   grid-template-columns: repeat(7, 1fr);
   grid-auto-rows: min-content;
   align-content: start;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.155);
   border-left: none;
   border-radius: 0px 6px 6px 0px;
   background: rgba(255, 255, 255, 0.02);
@@ -275,7 +275,7 @@
 
   border-radius: 8px;
   background: rgba(43, 38, 83, 0.196);
-  border: none;
+  border: 1px solid rgba(91, 120, 255, 0.25);
 
   font: inherit;
   color: inherit;

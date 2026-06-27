@@ -187,9 +187,6 @@ function MobileDayCarousel({ calendarDays, eventsForDay, allGuildNames }) {
 
   const activeDay = calendarDays[selectedIndex];
 
-
-
-
   return (
     <div className="raid-mobile-day-view">
       <div className="raid-mobile-day-header">
