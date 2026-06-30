@@ -1,0 +1,93 @@
+.priv-page {
+  --bg: #050608;
+  --panel: #0c0e12;
+  --border: rgba(255, 255, 255, 0.08);
+  --border-soft: rgba(255, 255, 255, 0.06);
+  --text: #f4f5f7;
+  --text-dim: #9aa0ac;
+  --text-faint: #686f7b;
+  --c-blue: #4f7df0;
+  --radius-lg: 20px;
+  --font-display: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+  position: relative;
+  z-index: 1;
+  color: var(--text);
+  font-family: var(--font-display);
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 100px 32px 96px;
+}
+
+.priv-page * {
+  box-sizing: border-box;
+}
+
+.priv-hero {
+  margin-bottom: 32px;
+}
+
+.priv-eyebrow {
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: var(--c-blue);
+  margin: 0 0 16px;
+}
+
+.priv-headline {
+  font-size: 38px;
+  line-height: 1.1;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin: 0 0 10px;
+}
+
+.priv-updated {
+  font-size: 13.5px;
+  color: var(--text-faint);
+  margin: 0;
+}
+
+.priv-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 28px 32px;
+  margin-bottom: 16px;
+}
+
+.priv-card h2 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+  margin: 0 0 10px;
+}
+
+.priv-card p {
+  font-size: 14.5px;
+  line-height: 1.6;
+  color: var(--text-dim);
+  margin: 0;
+}
+
+.priv-card a {
+  color: var(--c-blue);
+  text-decoration: none;
+}
+
+.priv-card a:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 860px) {
+  .priv-page {
+    padding: 120px 20px 64px;
+  }
+  .priv-headline {
+    font-size: 28px;
+  }
+  .priv-card {
+    padding: 22px 20px;
+  }
+}

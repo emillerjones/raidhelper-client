@@ -11,7 +11,7 @@ const RAID_KEYWORDS = {
   AQ20: ["aq20", "aq 20", "ruins of ahn"],
   Ony: ["ony", "onyxia"],
   MC: ["molten core", "mc", "molten", "core"],
-  BWL: ["bwl", "blackwing lair", "blackwing"],
+  BWL: ["bwl", "blackwing lair", "blackwing", " bwl "],
   AQ40: ["aq40", "aq 40", "temple of ahn'qiraj", "ouro", "cthun", "aq-40"],
   Naxx: ["naxx", "naxxramas"],
 };

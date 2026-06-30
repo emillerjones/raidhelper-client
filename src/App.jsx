@@ -8,6 +8,7 @@ import Stats from "./Guilds";
 import HowItWorks from "./HowItWorks";
 import Features from "./Features";
 import FAQ from "./FAQ";
+import HorizonPrivacy  from "./HorizonPrivacy";
 
 export default function App() {
   return (
@@ -30,6 +31,10 @@ export default function App() {
 
       <Route element={<MainLayout heroHeight="820px" />}>
         <Route path="/faq" element={<FAQ />} />
+      </Route>
+
+      <Route element={<MainLayout heroHeight="820px" />}>
+        <Route path="/privacy" element={<HorizonPrivacy />} />
       </Route>
 
       <Route element={<AppLayout />}>
