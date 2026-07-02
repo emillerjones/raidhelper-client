@@ -12,7 +12,7 @@ const RAID_KEYWORDS = {
   Ony: ["ony", "onyxia"],
   MC: ["molten core", "mc", "molten", "core"],
   BWL: ["bwl", "blackwing lair", "blackwing"],
-  AQ40: ["aq40", "aq 40", "temple of ahn'qiraj", "ouro", "cthun"],
+  AQ40: ["aq40", "aq 40", "temple of ahn'qiraj", "ouro", "cthun", "aq-40"],
   Naxx: ["naxx", "naxxramas"],
 };
 
@@ -87,15 +87,21 @@ function GuildIcon({ guildName, guildIconUrl }) {
 export default function Guilds() {
   const [events, setEvents] = useState([]);
   const [openGuildId, setOpenGuildId] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [guildsData, setGuildsData] = useState([]);
+  const [raidsByDay, setRaidsByDay] = useState([]);
 
   useEffect(() => {
     let isMounted = true;
 
     async function fetchEvents() {
       try {
-        const res = await fetch(`${API}/api/raidhelper/imported`);
+        const res = await fetch(`${API}/api/raidhelper/stats`);
         if (!res.ok) throw new Error(`Request failed: ${res.status}`);
         const data = await res.json();
+
+        const guildsRaw = data.guilds || [];
+        setRaidsByDay(data.raidsByDay || []);
 
         const mappedEvents = data.map((raid) => {
           const raw = raid.raw_json || {};
@@ -141,7 +147,7 @@ export default function Guilds() {
   }
 
   const now = new Date();
-  const guilds = [...guildMap.values()].map((guild) => {
+  let guilds = [...guildMap.values()].map((guild) => {
     const upcoming = guild.raids
       .filter((r) => new Date(r.startTime || r.start_time) >= now)
       .sort((a, b) => new Date(a.startTime || a.start_time) - new Date(b.startTime || b.start_time));
@@ -156,8 +162,15 @@ export default function Guilds() {
     return { ...guild, nextRaid, raidsThisWeek };
   }).sort((a, b) => b.raidsThisWeek - a.raidsThisWeek);
 
+  if (searchTerm.trim()) {
+    const term = searchTerm.trim().toLowerCase();
+    guilds = guilds.filter((g) => (g.guildName || "").toLowerCase().includes(term));
+  }
+
   const totalRaids = events.length;
   const totalRaidsThisWeek = events.filter((e) => e.localDate && e.localDate >= weekStart && e.localDate <= weekEnd).length;
+  const totalRaidsToday = events.filter((e) => e.localDate === getDateKeyFromDate(today)).length;
+  const totalGuilds = guildMap.size;
 
   return (
     <div className="guilds-page">
@@ -166,28 +179,59 @@ export default function Guilds() {
           Every guild, <span className="guilds-gradient">at a glance.</span>
         </h1>
         <p className="guilds-subhead">
-          See who's running raids and when, across every guild Horizon tracks.
+          {totalGuilds} guilds tracked across Discord. Updates whenever a scan runs.
         </p>
       </section>
 
       <section className="guilds-stats-card">
         <div className="guilds-stat">
-          <p className="guilds-stat-value">{guilds.length}</p>
+          <p className="guilds-stat-value">{totalGuilds}</p>
           <p className="guilds-stat-label">Guilds</p>
         </div>
-        <div className="guilds-stat-divider" />
+        <div className="feat-stat-divider" />
         <div className="guilds-stat">
           <p className="guilds-stat-value">{totalRaids}</p>
           <p className="guilds-stat-label">Raids tracked</p>
         </div>
-        <div className="guilds-stat-divider" />
+        <div className="feat-stat-divider" />
         <div className="guilds-stat">
           <p className="guilds-stat-value">{totalRaidsThisWeek}</p>
-          <p className="guilds-stat-label">Raids this week</p>
+          <p className="guilds-stat-label">This week</p>
+        </div>
+        <div className="feat-stat-divider" />
+        <div className="guilds-stat">
+          <p className="guilds-stat-value">{totalRaidsToday}</p>
+          <p className="guilds-stat-label">Today</p>
         </div>
       </section>
 
+      <section className="guilds-stats-card">
+        {raidsByDay.map((day) => (
+          <div className="guilds-stat" key={day.day_of_week}>
+            <p className="guilds-stat-value">{day.event_count}</p>
+            <p className="guilds-stat-label">{day.day_of_week}</p>
+          </div>
+        ))}
+      </section>
+
+
+      <input
+        type="text"
+        className="guilds-search"
+        placeholder="Search guilds..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+
       <section className="guilds-panel">
+        <div className="guilds-table-head">
+          <span>Guild</span>
+          <span>This week</span>
+          <span>Total</span>
+          <span>Next raid</span>
+          <span></span>
+        </div>
+
         <div className="guilds-list">
           {guilds.map((guild) => {
             const isOpen = openGuildId === guild.guild_id;
@@ -202,35 +246,40 @@ export default function Guilds() {
                   onClick={() => setOpenGuildId(isOpen ? null : guild.guild_id)}
                   aria-expanded={isOpen}
                 >
-                  <GuildIcon guildName={guild.guildName} guildIconUrl={guild.guildIconUrl} />
-
                   <div className="guilds-row-identity">
+                    <GuildIcon guildName={guild.guildName} guildIconUrl={guild.guildIconUrl} />
                     <span className="guilds-row-name">{guild.guildName || "Unknown guild"}</span>
-                    <span className="guilds-row-week">{guild.raidsThisWeek} raid{guild.raidsThisWeek === 1 ? "" : "s"} this week</span>
                   </div>
 
-                  <div className="guilds-row-total">
-                    <span className="guilds-row-total-value">{guild.raids.length}</span>
-                    <span className="guilds-row-total-label">total raids</span>
-                  </div>
+                  <div className="guilds-row-stats">
 
-                  {guild.nextRaid ? (
-                    <a
-                      className="guilds-row-next"
-                      style={{ "--raid-color": nextRaidColor }}
-                      href={`https://discord.com/channels/${guild.nextRaid.guild_id}/${guild.nextRaid.channel_id}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <span className="guilds-row-next-badge">{nextRaidType}</span>
-                      <span className="guilds-row-next-time">
-                        {formatRelativeRaidTime(new Date(guild.nextRaid.startTime || guild.nextRaid.start_time))}
-                      </span>
-                    </a>
-                  ) : (
-                    <span className="guilds-row-next guilds-row-next--empty">No upcoming raid</span>
-                  )}
+                    {/* <span className="guilds-row-week-value">{guild.raidsThisWeek} this week</span> */}
+                    <span className="guilds-row-week-value">
+                      {guild.raidsThisWeek}<span className="guilds-stat-label">  this week </span>
+                    </span>
+                    {/* <span className="guilds-row-total-value">{guild.raids.length}<span></span> total</span> */}
+                    <span className="guilds-row-total-value">
+                      {guild.raids.length}<span className="guilds-stat-label">  total </span>
+                    </span>
+
+                    {guild.nextRaid ? (
+                      <a
+                        className="guilds-row-next"
+                        style={{ "--raid-color": nextRaidColor }}
+                        href={`https://discord.com/channels/${guild.nextRaid.guild_id}/${guild.nextRaid.channel_id}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <span className="guilds-row-next-badge">{nextRaidType}</span>
+                        <span className="guilds-row-next-time">
+                          {formatRelativeRaidTime(new Date(guild.nextRaid.startTime || guild.nextRaid.start_time))}
+                        </span>
+                      </a>
+                    ) : (
+                      <span className="guilds-row-next guilds-row-next--empty">No upcoming raid</span>
+                    )}
+                  </div>
 
                   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" className="guilds-row-chevron">
                     <path d="M6 9l6 6 6-6" />
@@ -239,6 +288,13 @@ export default function Guilds() {
 
                 {isOpen && (
                   <div className="guilds-row-body">
+                    <div className="guilds-raid-head">
+                      <span>Type</span>
+                      <span>Raid</span>
+                      <span>Signups</span>
+                      <span>Date</span>
+                    </div>
+
                     {guild.raids
                       .slice()
                       .sort((a, b) => new Date(b.startTime || b.start_time) - new Date(a.startTime || a.start_time))
@@ -246,6 +302,7 @@ export default function Guilds() {
                         const raidType = matchRaidType(raid.raid_name || raid.title);
                         const signupCount = raid.signup_count ?? raid.raw_json?.signupCount ?? "?";
                         const signupMax = raid.signup_max ?? raid.raw_json?.signupMax ?? "?";
+                        const creator = raid.raid_leader ?? raid.raw_json?.raidLeader ?? "Unknown";
 
                         return (
                           <a
@@ -261,8 +318,10 @@ export default function Guilds() {
                             >
                               {raidType}
                             </span>
-                            <span className="guilds-raid-name">{raid.raid_name || raid.title}</span>
-                            <span className="guilds-raid-leader">{raid.raid_leader ?? "Unknown"}</span>
+                            <span className="guilds-raid-name-wrap">
+                              <span className="guilds-raid-name">{raid.raid_name || raid.title}</span>
+                              <span className="guilds-raid-creator">by {creator}</span>
+                            </span>
                             <span className="guilds-raid-signups">{signupCount}/{signupMax}</span>
                             <span className="guilds-raid-date">
                               {new Date(raid.startTime || raid.start_time).toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" })}
@@ -279,7 +338,7 @@ export default function Guilds() {
           })}
 
           {guilds.length === 0 && (
-            <p className="guilds-empty">No guilds found yet.</p>
+            <p className="guilds-empty">No guilds match your search.</p>
           )}
         </div>
       </section>
