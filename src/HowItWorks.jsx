@@ -64,7 +64,19 @@ const TRUST_ITEMS = [
     icon: "chrome",
     color: "chrome",
     title: "Chrome extension",
-    desc: "Coming soon to the Chrome Web Store.",
+    desc: (
+      <>
+        Available now on the{" "}
+        <a
+          href="https://chromewebstore.google.com/detail/horizon-raid-calendar/hpmdebjcifgnopndpbmeocgkllhklahd?authuser=0&hl=en"
+          target="_blank"
+          rel="noreferrer"
+        >
+          Chrome Web Store
+        </a>
+        .
+      </>
+    ),
   },
 ];
 
