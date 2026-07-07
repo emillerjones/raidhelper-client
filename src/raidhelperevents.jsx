@@ -440,29 +440,31 @@ export default function RaidHelperEvents() {
           <span className="raid-calendar-top-month">
             {today.toLocaleString("default", { month: "long" })} {year}
           </span>
-          <div className="raid-calendar-view-toggle">
-            <button
-              type="button"
-              className="raid-calendar-view-toggle__button"
-              onClick={decreaseDayView}
-              disabled={dayViewCount === 1}
-            >
-              −
-            </button>
+          {!isMobile && (
+            <div className="raid-calendar-view-toggle">
+              <button
+                type="button"
+                className="raid-calendar-view-toggle__button"
+                onClick={decreaseDayView}
+                disabled={dayViewCount === 1}
+              >
+                −
+              </button>
 
-            <span className="raid-calendar-view-toggle__label">
-              {dayViewCount} Days
-            </span>
+              <span className="raid-calendar-view-toggle__label">
+                {dayViewCount} Days
+              </span>
 
-            <button
-              type="button"
-              className="raid-calendar-view-toggle__button"
-              onClick={increaseDayView}
-              disabled={dayViewCount === 7}
-            >
-              +
-            </button>
-          </div>
+              <button
+                type="button"
+                className="raid-calendar-view-toggle__button"
+                onClick={increaseDayView}
+                disabled={dayViewCount === 7}
+              >
+                +
+              </button>
+            </div>
+          )}
         </div>
 
         {!isMobile && (
