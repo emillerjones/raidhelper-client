@@ -264,7 +264,7 @@
 
 .raid-calendar__event {
   display: flex;
-  align-items: stretch;
+  /* align-items: stretch; */
   width: 100%;
   box-sizing: border-box;
 
@@ -539,4 +539,17 @@
   color: rgba(255, 255, 255, 0.4);
   font-size: 0.9rem;
   margin-top: 40px;
+}
+.raid-mobile-embla__slide .raid-calendar__event-info {
+  width: 40px;
+  height: 40px;
+  font-size: 1rem;
+}
+
+.raid-mobile-embla__slide .raid-calendar__event-info {
+  width: 40px;
+  height: 40px;
+  font-size: 1rem;
+
+  align-self: center;
 }
