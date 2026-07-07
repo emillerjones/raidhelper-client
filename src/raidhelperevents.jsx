@@ -2,6 +2,8 @@ import { useEffect, useState, useCallback } from "react";
 import { Link } from "react-router-dom";
 import useEmblaCarousel from "embla-carousel-react";
 import horizonLogo from "./assets/horizon-logo.png";
+import RaidEventDetailsModal from "./RaidEventDetailsModal";
+import GuildBadge from "./components/GuildBadge";
 import "./raidhelperevents.css";
 
 const API = import.meta.env.VITE_API;
@@ -41,37 +43,7 @@ function matchRaidType(title) {
   return null;
 }
 
-function getGuildColor(guildName, allGuildNames) {
-  if (!guildName) return "hsl(0, 0%, 50%)";
-  const index = allGuildNames.indexOf(guildName);
-  const total = allGuildNames.length || 1;
-  const hue = (index / total) * 360;
-  return `hsl(${hue}, 65%, 55%)`;
-}
 
-function GuildBadge({ guildName, guildIconUrl, allGuildNames }) {
-  if (guildIconUrl) {
-    return (
-      <img
-        className="guild-badge guild-badge--image"
-        src={guildIconUrl}
-        alt={guildName || ""}
-      />
-    );
-  }
-
-  const initial = guildName ? guildName.trim().charAt(0).toUpperCase() : "?";
-  const color = getGuildColor(guildName, allGuildNames);
-
-  return (
-    <span
-      className="guild-badge guild-badge--fallback"
-      style={{ backgroundColor: color }}
-    >
-      {initial}
-    </span>
-  );
-}
 
 function getDateKeyFromDate(date) {
   const year = date.getFullYear();
@@ -132,7 +104,7 @@ function openDiscordChannel(guildId, channelId) {
 // guild/channel path correctly to the native app, so mobile uses a normal
 // same-tab navigation instead. Desktop keeps target="_blank" since there's
 // no such handoff issue there.
-function EventCard({ event, allGuildNames, isMobile }) {
+function EventCard({ event, allGuildNames, isMobile, onInfoClick }) {
   return (
     // <a
     //   className="raid-calendar__event"
@@ -140,11 +112,11 @@ function EventCard({ event, allGuildNames, isMobile }) {
     //   target={isMobile ? undefined : "_blank"}
     //   rel="noreferrer"
     // >
-      <button
-        type="button"
-        className="raid-calendar__event"
-        onClick={() => openDiscordChannel(event.guild_id, event.channel_id)}
-      >
+    <button
+      type="button"
+      className="raid-calendar__event"
+      onClick={() => openDiscordChannel(event.guild_id, event.channel_id)}
+    >
       <div className="raid-calendar__event-icon">
         <GuildBadge
           guildName={event.guildName}
@@ -157,13 +129,22 @@ function EventCard({ event, allGuildNames, isMobile }) {
         <span>{event.guildName}</span>
         <span>{event.raid_name || event.title}</span>
       </div>
-
+      <button
+        type="button"
+        className="raid-calendar__event-info"
+        onClick={(e) => {
+          e.stopPropagation();
+          onInfoClick(event);
+        }}
+      >
+        i
+      </button>
     </button>
   );
 }
 
 // Mobile single-day swipe view, powered by Embla
-function MobileDayCarousel({ calendarDays, eventsForDay, allGuildNames }) {
+function MobileDayCarousel({ calendarDays, eventsForDay, allGuildNames, onInfoClick }) {
   const [emblaRef, emblaApi] = useEmblaCarousel({
     align: "start",
     skipSnaps: false,
@@ -246,6 +227,7 @@ function MobileDayCarousel({ calendarDays, eventsForDay, allGuildNames }) {
                       event={event}
                       allGuildNames={allGuildNames}
                       isMobile
+                      onInfoClick={onInfoClick}
                     />
                   ))
                 )}
@@ -257,6 +239,12 @@ function MobileDayCarousel({ calendarDays, eventsForDay, allGuildNames }) {
     </div>
   );
 }
+// end of mobile view
+
+
+
+
+
 
 export default function RaidHelperEvents() {
   const [events, setEvents] = useState([]);
@@ -265,6 +253,7 @@ export default function RaidHelperEvents() {
   const [isMobile, setIsMobile] = useState(
     typeof window !== "undefined" ? window.innerWidth <= MOBILE_BREAKPOINT : false
   );
+  const [selectedEvent, setSelectedEvent] = useState(null);
 
   useEffect(() => {
     function handleResize() {
@@ -481,6 +470,7 @@ export default function RaidHelperEvents() {
           calendarDays={calendarDays}
           eventsForDay={eventsForDay}
           allGuildNames={allGuildNames}
+          onInfoClick={setSelectedEvent}
         />
       ) : (
         <div className="raid-calendar-layout">
@@ -551,6 +541,7 @@ export default function RaidHelperEvents() {
                         event={event}
                         allGuildNames={allGuildNames}
                         isMobile={isMobile}
+                        onInfoClick={setSelectedEvent}
                       />
                     ))}
                   </>
@@ -559,6 +550,12 @@ export default function RaidHelperEvents() {
             ))}
           </section>
         </div>
+      )}
+      {selectedEvent && (
+        <RaidEventDetailsModal 
+          event={selectedEvent} 
+          onClose={() => setSelectedEvent(null)}
+        />
       )}
     </main>
   );
