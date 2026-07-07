@@ -435,6 +435,49 @@
 
 
 
+.raid-calendar-view-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  margin-left: 6px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.raid-calendar-view-toggle__button {
+  width: 26px;
+  height: 26px;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  color: white;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.raid-calendar-view-toggle__button:hover:not(:disabled) {
+  background: rgba(91, 120, 255, 0.45);
+}
+
+.raid-calendar-view-toggle__button:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.raid-calendar-view-toggle__label {
+  min-width: 54px;
+  text-align: center;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: white;
+}
+
+
+
+
 
 
 /* ===== Mobile single-day swipe view ===== */

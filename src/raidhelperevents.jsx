@@ -98,6 +98,7 @@ function openDiscordChannel(guildId, channelId) {
   }, 300);
 }
 
+
 // Single event card, shared between the desktop grid and the mobile day view.
 // `isMobile` controls whether the link opens in a new tab: on iOS, opening a
 // Discord Universal Link via target="_blank" can fail to hand off the
@@ -142,6 +143,9 @@ function EventCard({ event, allGuildNames, isMobile, onInfoClick }) {
     </button>
   );
 }
+
+
+
 
 // Mobile single-day swipe view, powered by Embla
 function MobileDayCarousel({ calendarDays, eventsForDay, allGuildNames, onInfoClick }) {
@@ -246,6 +250,14 @@ function MobileDayCarousel({ calendarDays, eventsForDay, allGuildNames, onInfoCl
 
 
 
+
+
+
+
+
+
+
+// start of main calendar
 export default function RaidHelperEvents() {
   const [events, setEvents] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -254,6 +266,8 @@ export default function RaidHelperEvents() {
     typeof window !== "undefined" ? window.innerWidth <= MOBILE_BREAKPOINT : false
   );
   const [selectedEvent, setSelectedEvent] = useState(null);
+  const [dayViewCount, setDayViewCount] = useState(7);
+
 
   useEffect(() => {
     function handleResize() {
@@ -329,7 +343,7 @@ export default function RaidHelperEvents() {
 
   const today = new Date();
   const year = today.getFullYear();
-  const calendarDays = Array.from({ length: 7 }, (_, i) => {
+  const calendarDays = Array.from({ length: dayViewCount }, (_, i) => {
     const day = new Date(today);
     day.setDate(today.getDate() + i);
     return day;
@@ -404,6 +418,17 @@ export default function RaidHelperEvents() {
 
   const totalRaidsThisWeek = eventsInWeek.length;
 
+  function decreaseDayView() {
+    setDayViewCount((prev) => Math.max(1, prev - 1));
+  }
+
+  function increaseDayView() {
+    setDayViewCount((prev) => Math.min(7, prev + 1));
+  }
+
+
+
+
   return (
     <main className="raid-calendar-page">
 
@@ -415,6 +440,29 @@ export default function RaidHelperEvents() {
           <span className="raid-calendar-top-month">
             {today.toLocaleString("default", { month: "long" })} {year}
           </span>
+          <div className="raid-calendar-view-toggle">
+            <button
+              type="button"
+              className="raid-calendar-view-toggle__button"
+              onClick={decreaseDayView}
+              disabled={dayViewCount === 1}
+            >
+              −
+            </button>
+
+            <span className="raid-calendar-view-toggle__label">
+              {dayViewCount} Days
+            </span>
+
+            <button
+              type="button"
+              className="raid-calendar-view-toggle__button"
+              onClick={increaseDayView}
+              disabled={dayViewCount === 7}
+            >
+              +
+            </button>
+          </div>
         </div>
 
         {!isMobile && (
@@ -524,7 +572,12 @@ export default function RaidHelperEvents() {
             })}
           </aside>
 
-          <section className="raid-calendar">
+          <section
+            className="raid-calendar"
+            style={{
+              gridTemplateColumns: `repeat(${dayViewCount}, 1fr)`,
+            }}
+          >
             {calendarDays.map((day) => (
               <div className="raid-calendar__header" key={day.toISOString()}>
                 {day.toLocaleDateString("default", { weekday: "short" })} - {day.getDate()}
