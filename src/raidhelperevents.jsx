@@ -7,6 +7,7 @@ import GuildBadge from "./components/GuildBadge";
 import "./raidhelperevents.css";
 
 const API = import.meta.env.VITE_API;
+const VISITOR_ID_KEY = "horizonVisitorId";
 
 const RAID_KEYWORDS = {
   ZG: ["zg", "zul", "gurub", "zul gurub"],
@@ -29,6 +30,20 @@ const RAID_COLORS = {
 };
 
 const MOBILE_BREAKPOINT = 768;
+
+function getVisitorId() {
+  let visitorId = localStorage.getItem(VISITOR_ID_KEY);
+
+  if (!visitorId) {
+    // Anonymous id so the server can count repeat visits without a login.
+    visitorId = crypto.randomUUID
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    localStorage.setItem(VISITOR_ID_KEY, visitorId);
+  }
+
+  return visitorId;
+}
 
 function matchRaidType(title) {
   if (!title) return null;
@@ -282,7 +297,11 @@ export default function RaidHelperEvents() {
 
     async function fetchEvents() {
       try {
-        const res = await fetch(`${API}/api/raidhelper/imported`);
+        const res = await fetch(`${API}/api/raidhelper/imported`, {
+          headers: {
+            "X-Visitor-Id": getVisitorId(),
+          },
+        });
         if (!res.ok) throw new Error(`Request failed: ${res.status}`);
         const data = await res.json();
 
@@ -326,7 +345,7 @@ export default function RaidHelperEvents() {
     // backgrounded for longer than the poll interval
     function handleVisibilityChange() {
       if (!document.hidden) {
-        fetchEvents();
+        // fetchEvents();
       }
     }
     document.addEventListener("visibilitychange", handleVisibilityChange);
