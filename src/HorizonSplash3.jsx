@@ -169,7 +169,7 @@ function CalendarPreview({ kind }) {
       className={
         kind === "mobile"
           ? "home3-calendar-wrap home3-calendar-wrap--mobile"
-          : "home3-calendar-wrap"
+          : "home3-calendar-wrap home3-calendar-wrap--clickable"
       }
       ref={wrapRef}
     >
@@ -184,6 +184,14 @@ function CalendarPreview({ kind }) {
         }}
         title="Raid Calendar live preview"
       />
+      {kind === "desktop" && (
+        <Link aria-label="Open the full calendar" className="home3-calendar-veil" to="/calendar">
+          <span className="home3-calendar-veil-hint">
+            Open Calendar
+            <span aria-hidden="true">-&gt;</span>
+          </span>
+        </Link>
+      )}
     </div>
   );
 }

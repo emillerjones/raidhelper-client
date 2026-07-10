@@ -292,6 +292,49 @@
   margin: 0 auto;
 }
 
+.home3-calendar-wrap--clickable .home3-calendar-iframe {
+  pointer-events: none;
+}
+
+.home3-calendar-veil {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+  background: rgba(5, 7, 10, 0);
+  transition: background 180ms ease;
+}
+
+.home3-calendar-veil:hover,
+.home3-calendar-veil:focus-visible {
+  background: rgba(5, 7, 10, 0.4);
+}
+
+.home3-calendar-veil-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 22px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 999px;
+  background: rgba(10, 14, 20, 0.9);
+  color: #fff;
+  font-weight: 800;
+  font-size: 14px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.home3-calendar-veil:hover .home3-calendar-veil-hint,
+.home3-calendar-veil:focus-visible .home3-calendar-veil-hint {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 .home3-calendar-iframe {
   position: absolute;
   top: 0;

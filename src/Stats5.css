@@ -190,6 +190,9 @@
   overflow-y: hidden;
   padding: 2px 2px 4px;
   scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  mask-image: linear-gradient(to right, transparent, black 14px, black calc(100% - 28px), transparent);
+  -webkit-mask-image: linear-gradient(to right, transparent, black 14px, black calc(100% - 28px), transparent);
 }
 
 .stats5-command {

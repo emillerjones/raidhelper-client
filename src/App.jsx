@@ -1,5 +1,6 @@
 import { Routes, Route } from "react-router-dom";
 import RaidHelperEvents from "./raidhelperevents";
+import ScrollToTop from "./ScrollToTop";
 
 import MainLayout from "./layout/MainLayout";
 import AppLayout from "./layout/AppLayout";
@@ -18,7 +19,9 @@ import HorizonPrivacy  from "./HorizonPrivacy";
 
 export default function App() {
   return (
-    <Routes>
+    <>
+      <ScrollToTop />
+      <Routes>
       <Route element={<MainLayout heroHeight="820px" />}>
         <Route path="/" element={<HorizonSplash3 />} />
       </Route>
@@ -70,6 +73,7 @@ export default function App() {
       <Route element={<AppLayout />}>
         <Route path="/calendar" element={<RaidHelperEvents />} />
       </Route>
-    </Routes>
+      </Routes>
+    </>
   );
 }
