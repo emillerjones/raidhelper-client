@@ -186,7 +186,7 @@ export default function Stats5() {
     })
   ), [dateScopedRaids, selectedGuildIds, selectedRaidTypes]);
 
-  const visibleRaids = scopedRaids.slice(0, 72);
+  const visibleRaids = scopedRaids.slice(0, 200);
   const activeRaid = visibleRaids.find((raid) => raid.raidhelper_event_id === activeRaidId) || visibleRaids[0] || null;
   const selectedGuild = useMemo(
     () => guilds.find((guild) => guild.guild_id === selectedGuildId) || null,
