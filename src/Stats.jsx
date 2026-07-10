@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import horizonMark from "./assets/horizon-mark.png";
-import "./Guilds.css";
+import "./Stats.css";
 
 const API = import.meta.env.VITE_API;
 
@@ -9,7 +9,7 @@ const RAID_KEYWORDS = {
   AQ20: ["aq20", "aq 20", "ruins of ahn"],
   Ony: ["ony", "onyxia"],
   MC: ["molten core", "mc", "molten", "core"],
-  BWL: ["bwl", "blackwing lair", "blackwing"],
+  BWL: ["bwl", "blackwing lair", "blackwing", " bwl "],
   AQ40: ["aq40", "aq 40", "temple of ahn'qiraj", "ouro", "cthun", "aq-40"],
   Naxx: ["naxx", "naxxramas"],
 };
@@ -24,6 +24,18 @@ const RAID_COLORS = {
   Naxx: "#185FA5",
   Other: "#686f7b",
 };
+
+const WEEKDAY_ORDER = [
+  "Sunday",
+  "Monday",
+  "Tuesday",
+  "Wednesday",
+  "Thursday",
+  "Friday",
+  "Saturday",
+];
+
+const RAID_TYPE_ORDER = [...Object.keys(RAID_KEYWORDS), "Other"];
 
 function matchRaidType(title) {
   if (!title) return "Other";
@@ -87,6 +99,41 @@ function formatRelativeRaidTime(date) {
   })}, ${timeStr}`;
 }
 
+function buildRaidsByDay(events) {
+  const counts = WEEKDAY_ORDER.reduce((map, day) => {
+    map[day] = 0;
+    return map;
+  }, {});
+
+  for (const event of events) {
+    const date = new Date(event.startTime || event.start_time);
+    if (Number.isNaN(date.getTime())) continue;
+    counts[WEEKDAY_ORDER[date.getDay()]] += 1;
+  }
+
+  return WEEKDAY_ORDER.map((day) => ({
+    day_of_week: day,
+    event_count: counts[day],
+  }));
+}
+
+function buildRaidsByType(events) {
+  const counts = RAID_TYPE_ORDER.reduce((map, raidType) => {
+    map[raidType] = 0;
+    return map;
+  }, {});
+
+  for (const event of events) {
+    const raidType = matchRaidType(event.raid_name || event.title);
+    counts[raidType] += 1;
+  }
+
+  return RAID_TYPE_ORDER.map((raidType) => ({
+    raid_type: raidType,
+    event_count: counts[raidType],
+  }));
+}
+
 function GuildIcon({ guildName, guildIconUrl }) {
   if (guildIconUrl) {
     return (
@@ -105,11 +152,12 @@ function GuildIcon({ guildName, guildIconUrl }) {
   );
 }
 
-export default function Guilds() {
+export default function Stats() {
   const [events, setEvents] = useState([]);
   const [openGuildId, setOpenGuildId] = useState(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [raidsByDay, setRaidsByDay] = useState([]);
+  const [raidsByType, setRaidsByType] = useState([]);
 
   useEffect(() => {
     let isMounted = true;
@@ -121,7 +169,7 @@ export default function Guilds() {
 
         const data = await res.json();
 
-        const allRaids = (data.guilds || []).flatMap((guild) => guild.raids || []);
+        const allRaids = data.raids || (data.guilds || []).flatMap((guild) => guild.raids || []);
 
         const mappedEvents = allRaids.map((raid) => {
           const raw = raid.raw_json || {};
@@ -139,7 +187,8 @@ export default function Guilds() {
 
         if (isMounted) {
           setEvents(mappedEvents);
-          setRaidsByDay(data.raidsByDay || []);
+          setRaidsByDay(buildRaidsByDay(mappedEvents));
+          setRaidsByType(buildRaidsByType(mappedEvents));
         }
       } catch (err) {
         console.error("Failed to load guilds:", err);
@@ -260,6 +309,19 @@ export default function Guilds() {
           <div className="guilds-stat" key={day.day_of_week}>
             <p className="guilds-stat-value">{day.event_count}</p>
             <p className="guilds-stat-label">{day.day_of_week}</p>
+          </div>
+        ))}
+      </section>
+
+      <section className="guilds-stats-card">
+        {raidsByType.map((raidType) => (
+          <div
+            className="guilds-stat guilds-stat--raid-type"
+            key={raidType.raid_type}
+            style={{ "--raid-color": RAID_COLORS[raidType.raid_type] }}
+          >
+            <p className="guilds-stat-value">{raidType.event_count}</p>
+            <p className="guilds-stat-label">{raidType.raid_type}</p>
           </div>
         ))}
       </section>

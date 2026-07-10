@@ -4,7 +4,7 @@ import RaidHelperEvents from "./raidhelperevents";
 import MainLayout from "./layout/MainLayout";
 import AppLayout from "./layout/AppLayout";
 import HorizonSplash from "./HorizonSplash";
-import Stats from "./Guilds";
+import Stats from "./Stats";
 import HowItWorks from "./HowItWorks";
 import Features from "./Features";
 import FAQ from "./FAQ";
