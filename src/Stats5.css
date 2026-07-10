@@ -1,0 +1,1024 @@
+.stats5-page {
+  --panel: rgba(9, 12, 17, 0.88);
+  --panel-strong: rgba(13, 17, 25, 0.96);
+  --border: rgba(255, 255, 255, 0.12);
+  --text: #f6f8fc;
+  --muted: #a8b4c8;
+  --blue: #8fa8ff;
+  color: var(--text);
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 96px 30px 86px;
+  position: relative;
+  z-index: 1;
+}
+
+.stats5-page * {
+  box-sizing: border-box;
+}
+
+.stats5-hero {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 28px;
+  margin-bottom: 18px;
+}
+
+.stats5-kicker {
+  color: var(--blue);
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  margin: 0 0 10px;
+  text-transform: uppercase;
+}
+
+.stats5-hero h1 {
+  color: rgba(255, 255, 255, 0.98);
+  font-size: clamp(40px, 6vw, 82px);
+  letter-spacing: 0;
+  line-height: 0.92;
+  margin: 0 0 14px;
+}
+
+.stats5-hero p {
+  color: rgba(223, 230, 243, 0.86);
+  font-size: 16px;
+  line-height: 1.5;
+  max-width: 650px;
+  margin: 0;
+}
+
+.stats5-totals {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(96px, 1fr));
+  gap: 10px;
+  min-width: 380px;
+}
+
+.stats5-totals span,
+.stats5-controls,
+.stats5-active-card,
+.stats5-line-card,
+.stats5-guilds,
+.stats5-guild-raids,
+.stats5-type-card {
+  border: 1px solid var(--border);
+  background: var(--panel);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.28);
+}
+
+.stats5-totals span {
+  border-radius: 10px;
+  color: rgba(232, 238, 249, 0.88);
+  padding: 13px 12px;
+  text-align: center;
+}
+
+.stats5-totals strong {
+  color: #9fb3ff;
+  display: block;
+  font-size: 27px;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.stats5-error {
+  color: #ff9393;
+  margin: 0 0 14px;
+}
+
+.stats5-controls {
+  align-items: center;
+  border-radius: 14px;
+  display: flex;
+  gap: 18px;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding: 14px;
+}
+
+.stats5-controls > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.stats5-controls span,
+.stats5-active-card span,
+.stats5-line-card span,
+.stats5-guilds header span,
+.stats5-guild-raids header span,
+.stats5-type-card header span,
+.stats5-feed header span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.stats5-controls p {
+  color: rgba(223, 230, 243, 0.8);
+  margin: 0;
+}
+
+.stats5-controls p strong {
+  color: #fff;
+}
+
+.stats5-segments {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.stats5-segment {
+  min-height: 32px;
+  padding: 0 13px;
+  border: 0;
+  border-radius: 7px;
+  background: transparent;
+  color: rgba(231, 237, 248, 0.74);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+}
+
+.stats5-segment:hover,
+.stats5-segment--active {
+  background: rgba(143, 168, 255, 0.18);
+  color: #fff;
+}
+
+.stats5-command {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 380px;
+  gap: 16px;
+  align-items: stretch;
+  margin-bottom: 16px;
+}
+
+.stats5-visual,
+.stats5-feed {
+  height: 690px;
+  min-height: 0;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 54% 46%, rgba(55, 76, 116, 0.25), transparent 34%),
+    linear-gradient(135deg, rgba(20, 31, 48, 0.7), rgba(5, 7, 10, 0.94));
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.38);
+  overflow: hidden;
+}
+
+.stats5-visual {
+  display: grid;
+  place-items: center;
+  padding: 20px;
+}
+
+.stats5-radar {
+  aspect-ratio: 1;
+  width: min(100%, 650px);
+  position: relative;
+  border: 1px solid rgba(143, 168, 255, 0.18);
+  border-radius: 50%;
+  background:
+    repeating-conic-gradient(from -90deg, rgba(255, 255, 255, 0.04) 0deg 0.5deg, transparent 0.5deg 45deg),
+    radial-gradient(circle, rgba(12, 18, 28, 0.94) 0 10%, rgba(8, 13, 20, 0.82) 10% 100%);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.03) inset,
+    0 0 80px rgba(72, 106, 166, 0.22);
+}
+
+.stats5-radar-grid {
+  position: absolute;
+  inset: 8%;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle, transparent 0 18%, rgba(143, 168, 255, 0.14) 18.2% 18.6%, transparent 18.8% 38%, rgba(143, 168, 255, 0.12) 38.2% 38.6%, transparent 38.8% 60%, rgba(143, 168, 255, 0.1) 60.2% 60.6%, transparent 60.8%),
+    linear-gradient(90deg, transparent 49.9%, rgba(143, 168, 255, 0.09) 50%, transparent 50.1%),
+    linear-gradient(0deg, transparent 49.9%, rgba(143, 168, 255, 0.09) 50%, transparent 50.1%);
+}
+
+.stats5-radar-sweep {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: conic-gradient(from -55deg, rgba(125, 170, 255, 0.28), transparent 36deg);
+  mix-blend-mode: screen;
+  opacity: 0.8;
+  animation: stats5-sweep 7s linear infinite;
+}
+
+.stats5-radar-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 72px;
+  height: 72px;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgba(143, 168, 255, 0.28);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: rgba(3, 5, 9, 0.92);
+  box-shadow: 0 0 28px rgba(143, 168, 255, 0.18);
+  z-index: 3;
+}
+
+.stats5-radar-center img {
+  width: 44px;
+}
+
+.stats5-radar-slice {
+  --radius: 45%;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  color: color-mix(in srgb, var(--raid-color) 80%, white 20%);
+  font-size: 11px;
+  font-weight: 800;
+  opacity: 0.82;
+  text-shadow: 0 0 12px rgba(0, 0, 0, 0.9);
+  transform:
+    rotate(var(--slice-angle))
+    translate(var(--radius))
+    rotate(calc(-1 * var(--slice-angle)))
+    translate(-50%, -50%);
+  z-index: 2;
+}
+
+.stats5-blip {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 34px;
+  height: 34px;
+  transform: translate(-50%, -50%);
+  border: 2px solid var(--raid-color);
+  border-radius: 50%;
+  background: rgba(4, 7, 12, 0.94);
+  box-shadow:
+    0 0 0 3px color-mix(in srgb, var(--raid-color) 17%, transparent),
+    0 0 22px color-mix(in srgb, var(--raid-color) 58%, transparent);
+  color: inherit;
+  text-decoration: none;
+  animation: stats5-pop 420ms ease both;
+  animation-delay: var(--delay);
+  z-index: 4;
+}
+
+.stats5-blip img,
+.stats5-star img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.stats5-blip:hover,
+.stats5-blip--active,
+.stats5-star:hover,
+.stats5-star--active {
+  z-index: 20;
+  box-shadow:
+    0 0 0 4px color-mix(in srgb, var(--raid-color) 28%, transparent),
+    0 0 34px color-mix(in srgb, var(--raid-color) 82%, transparent);
+}
+
+.stats5-blip-card {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  width: 220px;
+  padding: 11px 12px;
+  transform: translateX(-50%) translateY(6px);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 10px;
+  background: rgba(5, 7, 11, 0.96);
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.stats5-blip:hover .stats5-blip-card,
+.stats5-blip:focus .stats5-blip-card {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.stats5-blip-card strong,
+.stats5-blip-card em,
+.stats5-blip-card small {
+  display: block;
+}
+
+.stats5-blip-card strong {
+  color: #fff;
+  font-size: 13px;
+}
+
+.stats5-blip-card em,
+.stats5-blip-card small {
+  color: rgba(222, 230, 244, 0.74);
+  font-size: 12px;
+  font-style: normal;
+  margin-top: 3px;
+}
+
+.stats5-timeline {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 590px;
+  border-radius: 14px;
+  background:
+    linear-gradient(90deg, transparent 0 6%, rgba(143, 168, 255, 0.22) 6.1% 6.2%, transparent 6.3%),
+    repeating-linear-gradient(90deg, rgba(255, 255, 255, 0.05) 0 1px, transparent 1px 8%),
+    repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.04) 0 1px, transparent 1px 10.5%);
+}
+
+.stats5-timeline::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 1px;
+  background: rgba(143, 168, 255, 0.44);
+}
+
+.stats5-star {
+  position: absolute;
+  left: var(--x);
+  top: var(--y);
+  width: 31px;
+  height: 31px;
+  transform: translate(-50%, -50%);
+  border: 2px solid var(--raid-color);
+  border-radius: 50%;
+  color: inherit;
+  text-decoration: none;
+  box-shadow: 0 0 22px color-mix(in srgb, var(--raid-color) 60%, transparent);
+}
+
+.stats5-star span {
+  position: absolute;
+  left: 50%;
+  top: calc(100% + 8px);
+  width: 132px;
+  transform: translateX(-50%);
+  text-align: center;
+  pointer-events: none;
+}
+
+.stats5-star strong,
+.stats5-star em {
+  display: block;
+  font-size: 11px;
+  font-style: normal;
+}
+
+.stats5-star strong {
+  color: var(--raid-color);
+}
+
+.stats5-star em {
+  color: rgba(230, 236, 248, 0.8);
+}
+
+.stats5-feed {
+  display: grid;
+  grid-template-rows: auto 1fr;
+  min-height: 0;
+  padding: 18px 0 0;
+}
+
+.stats5-feed header {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 0 18px 14px;
+}
+
+.stats5-feed header strong,
+.stats5-line-card header strong,
+.stats5-guilds header strong,
+.stats5-guild-raids header strong,
+.stats5-type-card header strong,
+.stats5-active-card strong {
+  display: block;
+  color: #fff;
+  font-size: 22px;
+  margin-top: 3px;
+}
+
+.stats5-feed header strong {
+  display: inline;
+  font-size: 22px;
+  margin-top: 0;
+}
+
+.stats5-feed-list {
+  min-height: 0;
+  overflow: auto;
+  padding: 0 10px 14px;
+}
+
+.stats5-feed-item {
+  display: grid;
+  grid-template-columns: 36px 48px 1fr;
+  gap: 9px 10px;
+  align-items: center;
+  padding: 10px 8px;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  color: inherit;
+  text-decoration: none;
+}
+
+.stats5-feed-item:hover,
+.stats5-feed-item--active {
+  background: color-mix(in srgb, var(--raid-color) 14%, transparent);
+}
+
+.stats5-feed-item img {
+  grid-row: span 2;
+  width: 34px;
+  height: 34px;
+  border: 1px solid var(--raid-color);
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.stats5-feed-item span {
+  color: var(--raid-color);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.stats5-feed-item strong {
+  color: #fff;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stats5-feed-item em,
+.stats5-feed-item small {
+  color: rgba(222, 230, 244, 0.72);
+  font-size: 12px;
+  font-style: normal;
+}
+
+.stats5-feed-item small {
+  grid-column: 3;
+  color: rgba(222, 230, 244, 0.88);
+}
+
+.stats5-detail,
+.stats5-lower {
+  display: grid;
+  grid-template-columns: 0.9fr 1.1fr;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.stats5-active-card,
+.stats5-line-card,
+.stats5-guilds,
+.stats5-guild-raids,
+.stats5-type-card {
+  border-radius: 18px;
+}
+
+.stats5-active-card {
+  padding: 18px;
+}
+
+.stats5-active-card p {
+  color: rgba(222, 230, 244, 0.78);
+  margin: 8px 0 0;
+}
+
+.stats5-line-card {
+  display: grid;
+  grid-template-columns: 190px 1fr;
+  gap: 14px 18px;
+  padding: 18px;
+}
+
+.stats5-type-filter {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.stats5-filter-chip {
+  min-height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 10px;
+  border: 1px solid color-mix(in srgb, var(--raid-color, #8fa8ff) 28%, rgba(255, 255, 255, 0.11));
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.035);
+  color: rgba(232, 238, 249, 0.82);
+  cursor: pointer;
+  font: inherit;
+}
+
+.stats5-filter-chip:hover,
+.stats5-filter-chip--active {
+  background: color-mix(in srgb, var(--raid-color, #8fa8ff) 18%, rgba(255, 255, 255, 0.035));
+  border-color: color-mix(in srgb, var(--raid-color, #8fa8ff) 68%, rgba(255, 255, 255, 0.16));
+  color: #fff;
+}
+
+.stats5-filter-chip span {
+  color: inherit;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.stats5-filter-chip b {
+  color: color-mix(in srgb, var(--raid-color, #9fb3ff) 78%, white 18%);
+  font-size: 13px;
+}
+
+.stats5-contact-line {
+  color: rgba(222, 230, 244, 0.78);
+  margin: 14px 0 0;
+}
+
+.stats5-contact-line b {
+  color: #fff;
+}
+
+.stats5-scope-metrics {
+  grid-column: 2;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.stats5-scope-metrics span {
+  min-height: 48px;
+  display: grid;
+  align-content: center;
+  padding: 8px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.035);
+  color: var(--muted);
+}
+
+.stats5-scope-metrics b {
+  color: #fff;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stats5-line-chart {
+  grid-column: 2;
+  min-height: 116px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(58px, 1fr));
+  gap: 10px;
+  align-items: end;
+}
+
+.stats5-line-column {
+  min-height: 112px;
+  display: grid;
+  grid-template-rows: 1fr auto auto;
+  gap: 4px;
+  align-items: end;
+}
+
+.stats5-line-column i {
+  width: 100%;
+  height: var(--bar-height);
+  min-height: 5px;
+  border-radius: 8px 8px 3px 3px;
+  background: linear-gradient(180deg, #9fb3ff, #1d8b76);
+}
+
+.stats5-line-column span,
+.stats5-line-column strong {
+  text-align: center;
+}
+
+.stats5-line-column span {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.stats5-line-column strong {
+  color: #fff;
+  font-size: 14px;
+}
+
+.stats5-guilds {
+  margin-bottom: 16px;
+  padding: 18px;
+}
+
+.stats5-guilds header {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.stats5-guilds header p {
+  color: rgba(222, 230, 244, 0.72);
+  margin: 0;
+}
+
+.stats5-guild-wall {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 18px 16px;
+  overflow: visible;
+}
+
+.stats5-guild {
+  position: relative;
+  width: 126px;
+  min-height: 132px;
+  display: grid;
+  justify-items: center;
+  align-content: start;
+  gap: 8px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+  animation: stats5-pop 420ms ease both;
+  animation-delay: var(--delay);
+}
+
+.stats5-guild-orb {
+  width: var(--guild-size);
+  height: var(--guild-size);
+  border: 1px solid color-mix(in srgb, var(--guild-color) 78%, white 10%);
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--guild-color) 14%, #0e1118);
+  box-shadow: 0 0 30px color-mix(in srgb, var(--guild-color) 45%, transparent);
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  transition: transform 160ms ease, box-shadow 160ms ease;
+}
+
+.stats5-guild-orb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.stats5-guild:hover,
+.stats5-guild--selected {
+  z-index: 10;
+}
+
+.stats5-guild:hover .stats5-guild-orb,
+.stats5-guild--selected .stats5-guild-orb {
+  transform: translateY(-3px) scale(1.06);
+  box-shadow:
+    0 0 0 2px color-mix(in srgb, var(--guild-color) 68%, white 12%),
+    0 0 44px color-mix(in srgb, var(--guild-color) 70%, transparent);
+}
+
+.stats5-guild > strong,
+.stats5-guild > em {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stats5-guild > strong {
+  color: #fff;
+  font-size: 12px;
+}
+
+.stats5-guild > em {
+  color: var(--guild-color);
+  font-size: 11px;
+  font-style: normal;
+}
+
+.stats5-guild-card {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 6px);
+  width: 225px;
+  transform: translateX(-50%) translateY(8px);
+  padding: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  background: rgba(5, 7, 11, 0.97);
+  box-shadow: 0 22px 52px rgba(0, 0, 0, 0.42);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.stats5-guild:hover .stats5-guild-card {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+.stats5-guild-card b,
+.stats5-guild-card small {
+  display: block;
+}
+
+.stats5-guild-card b {
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.stats5-guild-card small {
+  color: rgba(222, 230, 244, 0.72);
+  font-size: 12px;
+  margin-top: 3px;
+}
+
+.stats5-guild-raids {
+  overflow: hidden;
+}
+
+.stats5-guild-raids header,
+.stats5-type-card header {
+  padding: 18px 18px 12px;
+}
+
+.stats5-guild-raids header p {
+  color: rgba(222, 230, 244, 0.72);
+  margin: 6px 0 0;
+}
+
+.stats5-guild-raids > div {
+  max-height: 460px;
+  overflow: auto;
+}
+
+.stats5-guild-raid {
+  display: grid;
+  grid-template-columns: 56px 1fr 160px;
+  gap: 12px;
+  align-items: center;
+  min-height: 43px;
+  padding: 10px 18px;
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+  color: inherit;
+  text-decoration: none;
+}
+
+.stats5-guild-raid:hover {
+  background: color-mix(in srgb, var(--raid-color) 12%, transparent);
+}
+
+.stats5-guild-raid span {
+  color: var(--raid-color);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.stats5-guild-raid strong {
+  color: #fff;
+  font-size: 13px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.stats5-guild-raid em {
+  color: rgba(222, 230, 244, 0.72);
+  font-size: 12px;
+  font-style: normal;
+  text-align: right;
+}
+
+.stats5-type-card {
+  padding-bottom: 14px;
+}
+
+.stats5-type-row {
+  display: grid;
+  grid-template-columns: 54px 1fr 42px;
+  gap: 10px;
+  align-items: center;
+  padding: 7px 18px;
+}
+
+.stats5-type-row span {
+  color: var(--raid-color);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.stats5-type-row i {
+  height: 9px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.07);
+  overflow: hidden;
+}
+
+.stats5-type-row b {
+  display: block;
+  width: var(--type-width);
+  height: 100%;
+  border-radius: inherit;
+  background: var(--raid-color);
+}
+
+.stats5-type-row strong {
+  color: #fff;
+  font-size: 14px;
+  text-align: right;
+}
+
+.stats5-empty {
+  color: rgba(222, 230, 244, 0.72);
+  margin: 0;
+  padding: 18px;
+}
+
+@keyframes stats5-sweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes stats5-pop {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.92);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 1080px) {
+  .stats5-hero,
+  .stats5-controls,
+  .stats5-guilds header {
+    align-items: start;
+    display: grid;
+  }
+
+  .stats5-totals {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .stats5-command,
+  .stats5-detail,
+  .stats5-lower {
+    grid-template-columns: 1fr;
+  }
+
+  .stats5-feed,
+  .stats5-visual {
+    height: 590px;
+  }
+}
+
+@media (max-width: 720px) {
+  .stats5-page {
+    padding: 86px 16px 70px;
+  }
+
+  .stats5-hero {
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+
+  .stats5-kicker {
+    margin-bottom: 6px;
+  }
+
+  .stats5-hero h1 {
+    font-size: clamp(34px, 13vw, 52px);
+    margin-bottom: 10px;
+  }
+
+  .stats5-hero p {
+    font-size: 14px;
+    line-height: 1.42;
+  }
+
+  .stats5-totals {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+
+  .stats5-totals span {
+    min-width: 0;
+    padding: 8px 6px;
+    border-radius: 9px;
+    font-size: 11px;
+  }
+
+  .stats5-totals strong {
+    font-size: 21px;
+    margin-bottom: 2px;
+  }
+
+  .stats5-controls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+    padding: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    scrollbar-width: none;
+  }
+
+  .stats5-controls > div {
+    display: flex;
+    align-items: center;
+    flex: 0 0 auto;
+    gap: 6px;
+  }
+
+  .stats5-controls > div > span {
+    display: none;
+  }
+
+  .stats5-segments {
+    flex-wrap: nowrap;
+    padding: 3px;
+  }
+
+  .stats5-segment {
+    min-height: 28px;
+    padding: 0 10px;
+    font-size: 12px;
+  }
+
+  .stats5-controls p {
+    flex: 0 0 auto;
+    font-size: 12px;
+  }
+
+  .stats5-visual,
+  .stats5-feed {
+    height: 460px;
+  }
+
+  .stats5-radar {
+    width: min(100%, 420px);
+  }
+
+  .stats5-radar-slice {
+    display: none;
+  }
+
+  .stats5-line-card {
+    grid-template-columns: 1fr;
+  }
+
+  .stats5-scope-metrics,
+  .stats5-line-chart {
+    grid-column: auto;
+  }
+
+  .stats5-type-filter,
+  .stats5-scope-metrics {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .stats5-guild {
+    width: 104px;
+  }
+
+  .stats5-guild-raid {
+    grid-template-columns: 48px 1fr;
+  }
+
+  .stats5-guild-raid em {
+    grid-column: 2;
+    text-align: left;
+  }
+}
