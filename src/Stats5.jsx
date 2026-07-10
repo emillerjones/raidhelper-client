@@ -1,5 +1,5 @@
 import horizonMark from "./assets/horizon-mark.png";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import {
   compareRaidScheduleAsc,
   formatRaidDateTime,
@@ -81,9 +81,11 @@ function RaidAvatar({ raid }) {
 }
 
 export default function Stats5() {
+  const selectedGuildPanelRef = useRef(null);
   const [scopeDays, setScopeDays] = useState(1);
   const [viewMode, setViewMode] = useState("radar");
-  const [activeRaidType, setActiveRaidType] = useState("All");
+  const [selectedRaidTypes, setSelectedRaidTypes] = useState([]);
+  const [selectedGuildIds, setSelectedGuildIds] = useState([]);
   const [activeRaidId, setActiveRaidId] = useState(null);
   const [selectedGuildId, setSelectedGuildId] = useState(null);
   const { error, events, guilds, isLoading, raidsByType, totalGuilds, totalRaids, raidsToday } = useStatsData();
@@ -97,10 +99,12 @@ export default function Stats5() {
   }, [events, scopeDays]);
 
   const scopedRaids = useMemo(() => (
-    activeRaidType === "All"
-      ? dateScopedRaids
-      : dateScopedRaids.filter((raid) => raid.raidType === activeRaidType)
-  ), [activeRaidType, dateScopedRaids]);
+    dateScopedRaids.filter((raid) => {
+      const raidTypeMatches = selectedRaidTypes.length === 0 || selectedRaidTypes.includes(raid.raidType);
+      const guildMatches = selectedGuildIds.length === 0 || selectedGuildIds.includes(raid.guild_id);
+      return raidTypeMatches && guildMatches;
+    })
+  ), [dateScopedRaids, selectedGuildIds, selectedRaidTypes]);
 
   const visibleRaids = scopedRaids.slice(0, 72);
   const activeRaid = visibleRaids.find((raid) => raid.raidhelper_event_id === activeRaidId) || visibleRaids[0] || null;
@@ -128,12 +132,51 @@ export default function Stats5() {
   const dayBuckets = getDayBuckets(scopedRaids, scopeDays);
   const maxBucket = Math.max(1, ...dayBuckets.map((bucket) => bucket.count));
   const maxRaidType = Math.max(1, ...raidsByType.map((type) => type.count));
+  const guildFilterBase = selectedRaidTypes.length === 0
+    ? dateScopedRaids
+    : dateScopedRaids.filter((raid) => selectedRaidTypes.includes(raid.raidType));
+  const raidTypeFilterBase = selectedGuildIds.length === 0
+    ? dateScopedRaids
+    : dateScopedRaids.filter((raid) => selectedGuildIds.includes(raid.guild_id));
   const typeScopeCounts = RAID_TYPE_ORDER.reduce((counts, raidType) => {
-    counts[raidType] = dateScopedRaids.filter((raid) => raid.raidType === raidType).length;
+    counts[raidType] = raidTypeFilterBase.filter((raid) => raid.raidType === raidType).length;
     return counts;
   }, {});
+  const guildScopeCounts = guildFilterBase.reduce((counts, raid) => {
+    counts[raid.guild_id] = (counts[raid.guild_id] || 0) + 1;
+    return counts;
+  }, {});
+  const guildFilterOptions = guilds
+    .filter((guild) => guildScopeCounts[guild.guild_id])
+    .sort((a, b) => (guildScopeCounts[b.guild_id] || 0) - (guildScopeCounts[a.guild_id] || 0));
   const nextRaidLabel = visibleRaids[0] ? formatRaidDateTime(visibleRaids[0]) : "No contacts";
   const busiestBucket = dayBuckets.slice().sort((a, b) => b.count - a.count)[0];
+
+  function toggleRaidType(raidType) {
+    setSelectedRaidTypes((prev) => (
+      prev.includes(raidType)
+        ? prev.filter((type) => type !== raidType)
+        : [...prev, raidType]
+    ));
+  }
+
+  function toggleGuild(guildId) {
+    setSelectedGuildIds((prev) => (
+      prev.includes(guildId)
+        ? prev.filter((id) => id !== guildId)
+        : [...prev, guildId]
+    ));
+  }
+
+  function selectGuildAndScroll(guildId) {
+    setSelectedGuildId(guildId);
+    window.requestAnimationFrame(() => {
+      selectedGuildPanelRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+  }
 
   return (
     <main className="stats5-page">
@@ -156,47 +199,99 @@ export default function Stats5() {
       {error && <p className="stats5-error">Could not load stats.</p>}
 
       <section className="stats5-controls" aria-label="Radar controls">
-        <div>
-          <span>Radar range</span>
-          <div className="stats5-segments">
-            {SCOPE_OPTIONS.map((option) => (
+        <div className="stats5-control-row stats5-control-row--primary">
+          <div>
+            <span>Radar range</span>
+            <div className="stats5-segments">
+              {SCOPE_OPTIONS.map((option) => (
+                <button
+                  className={scopeDays === option.days ? "stats5-segment stats5-segment--active" : "stats5-segment"}
+                  key={option.days}
+                  onClick={() => setScopeDays(option.days)}
+                  type="button"
+                >
+                  {option.label}
+                </button>
+              ))}
+            </div>
+          </div>
+          <div>
+            <span>View</span>
+            <div className="stats5-segments">
               <button
-                className={scopeDays === option.days ? "stats5-segment stats5-segment--active" : "stats5-segment"}
-                key={option.days}
-                onClick={() => setScopeDays(option.days)}
+                className={viewMode === "radar" ? "stats5-segment stats5-segment--active" : "stats5-segment"}
+                onClick={() => setViewMode("radar")}
                 type="button"
               >
-                {option.label}
+                Radar
+              </button>
+              <button
+                className={viewMode === "timeline" ? "stats5-segment stats5-segment--active" : "stats5-segment"}
+                onClick={() => setViewMode("timeline")}
+                type="button"
+              >
+                Timeline
+              </button>
+            </div>
+          </div>
+        </div>
+        <div className="stats5-filter-row">
+          <span>Raid type</span>
+          <div className="stats5-chip-rail" aria-label="Filter by raid type">
+            <button
+              className={selectedRaidTypes.length === 0 ? "stats5-filter-chip stats5-filter-chip--active" : "stats5-filter-chip"}
+              onClick={() => setSelectedRaidTypes([])}
+              type="button"
+            >
+              <span>All</span>
+              <b>{raidTypeFilterBase.length}</b>
+            </button>
+            {RAID_TYPE_ORDER.map((raidType) => (
+              <button
+                className={selectedRaidTypes.includes(raidType) ? "stats5-filter-chip stats5-filter-chip--active" : "stats5-filter-chip"}
+                key={raidType}
+                onClick={() => toggleRaidType(raidType)}
+                style={{ "--raid-color": RAID_COLORS[raidType] }}
+                type="button"
+              >
+                <span>{raidType}</span>
+                <b>{typeScopeCounts[raidType]}</b>
               </button>
             ))}
           </div>
         </div>
-        <div>
-          <span>View</span>
-          <div className="stats5-segments">
+        <div className="stats5-filter-row">
+          <span>Guilds</span>
+          <div className="stats5-chip-rail stats5-chip-rail--guilds" aria-label="Filter by guild">
             <button
-              className={viewMode === "radar" ? "stats5-segment stats5-segment--active" : "stats5-segment"}
-              onClick={() => setViewMode("radar")}
+              className={selectedGuildIds.length === 0 ? "stats5-filter-chip stats5-filter-chip--active" : "stats5-filter-chip"}
+              onClick={() => setSelectedGuildIds([])}
               type="button"
             >
-              Radar
+              <span>All guilds</span>
+              <b>{guildFilterBase.length}</b>
             </button>
-            <button
-              className={viewMode === "timeline" ? "stats5-segment stats5-segment--active" : "stats5-segment"}
-              onClick={() => setViewMode("timeline")}
-              type="button"
-            >
-              Timeline
-            </button>
+            {guildFilterOptions.map((guild) => (
+              <button
+                className={selectedGuildIds.includes(guild.guild_id) ? "stats5-filter-chip stats5-filter-chip--guild stats5-filter-chip--active" : "stats5-filter-chip stats5-filter-chip--guild"}
+                key={guild.guild_id}
+                onClick={() => toggleGuild(guild.guild_id)}
+                type="button"
+              >
+                <GuildAvatar guild={guild} />
+                <span>{guild.guildName || "Unknown guild"}</span>
+                <b>{guildScopeCounts[guild.guild_id]}</b>
+              </button>
+            ))}
           </div>
         </div>
-        <p>
-          Showing <strong>{visibleRaids.length}</strong> raids in the selected range.
-        </p>
       </section>
 
       <section className="stats5-command" aria-busy={isLoading}>
         <div className="stats5-visual">
+          <div className="stats5-radar-count">
+            Showing <strong>{visibleRaids.length}</strong> raids
+          </div>
           {viewMode === "radar" ? (
             <div className="stats5-radar" aria-label="Upcoming raid radar">
               <div className="stats5-radar-grid" />
@@ -205,16 +300,25 @@ export default function Stats5() {
                 <img src={horizonMark} alt="" />
               </div>
               {RAID_TYPE_ORDER.map((raidType, index) => (
-                <span
-                  className="stats5-radar-slice"
-                  key={raidType}
-                  style={{
-                    "--slice-angle": `${-90 + index * (360 / RAID_TYPE_ORDER.length) + 360 / RAID_TYPE_ORDER.length / 2}deg`,
-                    "--raid-color": RAID_COLORS[raidType],
-                  }}
-                >
-                  {raidType}
-                </span>
+                (() => {
+                  const angle = -90 + index * (360 / RAID_TYPE_ORDER.length) + 360 / RAID_TYPE_ORDER.length / 2;
+                  const radians = (angle * Math.PI) / 180;
+                  const radius = 52;
+
+                  return (
+                    <span
+                      className="stats5-radar-slice"
+                      key={raidType}
+                      style={{
+                        "--label-x": `${50 + Math.cos(radians) * radius}%`,
+                        "--label-y": `${50 + Math.sin(radians) * radius}%`,
+                        "--raid-color": RAID_COLORS[raidType],
+                      }}
+                    >
+                      {raidType}
+                    </span>
+                  );
+                })()
               ))}
               {visibleRaids.map((raid, index) => {
                 const point = getPointPosition(raid, index, visibleRaids);
@@ -316,29 +420,7 @@ export default function Stats5() {
       <section className="stats5-detail">
         <div className="stats5-active-card">
           <span>Radar filters</span>
-          <strong>Raid Type</strong>
-          <div className="stats5-type-filter" aria-label="Filter radar by raid type">
-            <button
-              className={activeRaidType === "All" ? "stats5-filter-chip stats5-filter-chip--active" : "stats5-filter-chip"}
-              onClick={() => setActiveRaidType("All")}
-              type="button"
-            >
-              <span>All</span>
-              <b>{dateScopedRaids.length}</b>
-            </button>
-            {RAID_TYPE_ORDER.map((raidType) => (
-              <button
-                className={activeRaidType === raidType ? "stats5-filter-chip stats5-filter-chip--active" : "stats5-filter-chip"}
-                key={raidType}
-                onClick={() => setActiveRaidType(raidType)}
-                style={{ "--raid-color": RAID_COLORS[raidType] }}
-                type="button"
-              >
-                <span>{raidType}</span>
-                <b>{typeScopeCounts[raidType]}</b>
-              </button>
-            ))}
-          </div>
+          <strong>{selectedRaidTypes.length || selectedGuildIds.length ? "Filtered contacts" : "All contacts"}</strong>
           {activeRaid ? (
             <p className="stats5-contact-line">
               Contact: <b>{activeRaid.raid_name || activeRaid.title}</b> / {activeRaid.guildName} / {formatRaidDateTime(activeRaid)}
@@ -351,7 +433,7 @@ export default function Stats5() {
         <div className="stats5-line-card">
           <header>
             <span>Scope summary</span>
-            <strong>{activeRaidType === "All" ? "All raids" : activeRaidType}</strong>
+            <strong>{selectedRaidTypes.length === 1 ? selectedRaidTypes[0] : selectedRaidTypes.length > 1 ? `${selectedRaidTypes.length} raid types` : "All raids"}</strong>
           </header>
           <div className="stats5-scope-metrics">
             <span><b>{visibleRaids.length}</b> contacts</span>
@@ -387,7 +469,7 @@ export default function Stats5() {
               <button
                 className={isSelected ? "stats5-guild stats5-guild--selected" : "stats5-guild"}
                 key={guild.guild_id}
-                onClick={() => setSelectedGuildId(guild.guild_id)}
+                onClick={() => selectGuildAndScroll(guild.guild_id)}
                 style={{
                   "--guild-size": `${48 + activity * 46}px`,
                   "--guild-color": RAID_COLORS[guild.dominantType],
@@ -411,7 +493,7 @@ export default function Stats5() {
       </section>
 
       <section className="stats5-lower">
-        <div className="stats5-guild-raids">
+        <div className="stats5-guild-raids" ref={selectedGuildPanelRef}>
           <header>
             <span>Selected guild</span>
             <strong>{selectedGuild?.guildName || "Click a guild icon"}</strong>

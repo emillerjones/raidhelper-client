@@ -89,19 +89,34 @@
 }
 
 .stats5-controls {
-  align-items: center;
   border-radius: 14px;
-  display: flex;
+  display: grid;
   gap: 18px;
-  justify-content: space-between;
   margin-bottom: 16px;
   padding: 14px;
 }
 
-.stats5-controls > div {
+.stats5-control-row,
+.stats5-filter-row {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 10px;
+}
+
+.stats5-control-row {
+  justify-content: space-between;
+}
+
+.stats5-control-row > div {
   display: flex;
   align-items: center;
   gap: 10px;
+}
+
+.stats5-filter-row {
+  display: grid;
+  grid-template-columns: 74px minmax(0, 1fr);
 }
 
 .stats5-controls span,
@@ -151,6 +166,16 @@
   color: #fff;
 }
 
+.stats5-chip-rail {
+  min-width: 0;
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 2px 2px 4px;
+  scrollbar-width: none;
+}
+
 .stats5-command {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 380px;
@@ -176,6 +201,24 @@
   display: grid;
   place-items: center;
   padding: 20px;
+  position: relative;
+}
+
+.stats5-radar-count {
+  position: absolute;
+  right: 18px;
+  top: 16px;
+  z-index: 25;
+  padding: 7px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 9px;
+  background: rgba(3, 5, 9, 0.62);
+  color: rgba(222, 230, 244, 0.72);
+  font-size: 12px;
+}
+
+.stats5-radar-count strong {
+  color: #fff;
 }
 
 .stats5-radar {
@@ -190,6 +233,7 @@
   box-shadow:
     0 0 0 1px rgba(255, 255, 255, 0.03) inset,
     0 0 80px rgba(72, 106, 166, 0.22);
+  overflow: visible;
 }
 
 .stats5-radar-grid {
@@ -233,20 +277,18 @@
 }
 
 .stats5-radar-slice {
-  --radius: 45%;
   position: absolute;
-  left: 50%;
-  top: 50%;
-  color: color-mix(in srgb, var(--raid-color) 80%, white 20%);
-  font-size: 11px;
+  left: var(--label-x);
+  top: var(--label-y);
+  color: color-mix(in srgb, var(--raid-color) 72%, rgba(255, 255, 255, 0.55));
+  font-size: 10px;
   font-weight: 800;
-  opacity: 0.82;
-  text-shadow: 0 0 12px rgba(0, 0, 0, 0.9);
-  transform:
-    rotate(var(--slice-angle))
-    translate(var(--radius))
-    rotate(calc(-1 * var(--slice-angle)))
-    translate(-50%, -50%);
+  letter-spacing: 0.04em;
+  opacity: 0.48;
+  text-shadow:
+    0 0 10px color-mix(in srgb, var(--raid-color) 36%, transparent),
+    0 0 16px rgba(0, 0, 0, 0.9);
+  transform: translate(-50%, -50%);
   z-index: 2;
 }
 
@@ -430,8 +472,9 @@
 
 .stats5-feed-item {
   display: grid;
-  grid-template-columns: 36px 48px 1fr;
-  gap: 9px 10px;
+  grid-template-columns: 40px 72px minmax(0, 1fr);
+  column-gap: 14px;
+  row-gap: 7px;
   align-items: center;
   padding: 10px 8px;
   border-top: 1px solid rgba(255, 255, 255, 0.07);
@@ -445,7 +488,7 @@
 }
 
 .stats5-feed-item img {
-  grid-row: span 2;
+  grid-row: 1 / 3;
   width: 34px;
   height: 34px;
   border: 1px solid var(--raid-color);
@@ -454,12 +497,14 @@
 }
 
 .stats5-feed-item span {
+  grid-column: 2;
   color: var(--raid-color);
   font-size: 11px;
   font-weight: 900;
 }
 
 .stats5-feed-item strong {
+  grid-column: 3;
   color: #fff;
   font-size: 13px;
   overflow: hidden;
@@ -472,6 +517,12 @@
   color: rgba(222, 230, 244, 0.72);
   font-size: 12px;
   font-style: normal;
+}
+
+.stats5-feed-item em {
+  grid-column: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .stats5-feed-item small {
@@ -523,6 +574,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  flex: 0 0 auto;
   gap: 8px;
   padding: 0 10px;
   border: 1px solid color-mix(in srgb, var(--raid-color, #8fa8ff) 28%, rgba(255, 255, 255, 0.11));
@@ -531,6 +583,17 @@
   color: rgba(232, 238, 249, 0.82);
   cursor: pointer;
   font: inherit;
+}
+
+.stats5-filter-chip--guild {
+  max-width: 190px;
+}
+
+.stats5-filter-chip--guild img {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  object-fit: cover;
 }
 
 .stats5-filter-chip:hover,
@@ -544,6 +607,9 @@
   color: inherit;
   font-size: 12px;
   font-weight: 800;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .stats5-filter-chip b {
@@ -761,6 +827,7 @@
 
 .stats5-guild-raids {
   overflow: hidden;
+  scroll-margin-top: 92px;
 }
 
 .stats5-guild-raids header,
@@ -879,7 +946,6 @@
 
 @media (max-width: 1080px) {
   .stats5-hero,
-  .stats5-controls,
   .stats5-guilds header {
     align-items: start;
     display: grid;
@@ -944,25 +1010,34 @@
   }
 
   .stats5-controls {
-    display: flex;
-    align-items: center;
     gap: 8px;
     margin-bottom: 10px;
     padding: 8px;
-    overflow-x: auto;
-    overflow-y: hidden;
-    white-space: nowrap;
-    scrollbar-width: none;
   }
 
-  .stats5-controls > div {
+  .stats5-control-row {
     display: flex;
     align-items: center;
-    flex: 0 0 auto;
+    justify-content: space-between;
     gap: 6px;
   }
 
-  .stats5-controls > div > span {
+  .stats5-control-row > div {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .stats5-control-row > div > span {
+    display: none;
+  }
+
+  .stats5-filter-row {
+    grid-template-columns: 1fr;
+    gap: 5px;
+  }
+
+  .stats5-filter-row > span {
     display: none;
   }
 
@@ -977,9 +1052,71 @@
     font-size: 12px;
   }
 
-  .stats5-controls p {
-    flex: 0 0 auto;
-    font-size: 12px;
+  .stats5-chip-rail {
+    gap: 6px;
+  }
+
+  .stats5-filter-chip {
+    min-height: 30px;
+    padding: 0 9px;
+  }
+
+  .stats5-filter-chip--guild {
+    width: 46px;
+    max-width: 46px;
+    min-height: 34px;
+    justify-content: center;
+    gap: 0;
+    padding: 0;
+    border-color: transparent;
+    background: transparent;
+    position: relative;
+  }
+
+  .stats5-filter-chip--guild:hover,
+  .stats5-filter-chip--guild.stats5-filter-chip--active {
+    background: transparent;
+    border-color: transparent;
+  }
+
+  .stats5-filter-chip--guild img {
+    width: 30px;
+    height: 30px;
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: 0 0 14px rgba(143, 168, 255, 0.12);
+  }
+
+  .stats5-filter-chip--guild.stats5-filter-chip--active img {
+    border-color: #9fb3ff;
+    box-shadow:
+      0 0 0 2px rgba(143, 168, 255, 0.28),
+      0 0 18px rgba(143, 168, 255, 0.46);
+  }
+
+  .stats5-filter-chip--guild span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .stats5-filter-chip--guild b {
+    position: absolute;
+    right: 2px;
+    bottom: 0;
+    min-width: 17px;
+    height: 17px;
+    display: grid;
+    place-items: center;
+    padding: 0 4px;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 99px;
+    background: rgba(3, 5, 9, 0.94);
+    color: #fff;
+    font-size: 10px;
+    line-height: 1;
   }
 
   .stats5-visual,
