@@ -25,7 +25,7 @@
 .horizon-navbar-links {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 0;
   flex: 1;
   justify-content: center;
 }
@@ -36,8 +36,19 @@
   text-decoration: none;
   font-size: 0.95rem;
   font-weight: 500;
-  padding-bottom: 6px;
+  padding: 0 1.05rem 6px;
   transition: color 0.2s ease;
+}
+
+.horizon-navbar-links a + a::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.18rem;
+  bottom: 0.46rem;
+  width: 1px;
+  background: rgba(255, 255, 255, 0.13);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.05);
 }
 
 .horizon-navbar-links a:hover {
@@ -51,8 +62,8 @@
 .horizon-navbar-link-active::after {
   content: "";
   position: absolute;
-  left: 0;
-  right: 0;
+  left: 1.05rem;
+  right: 1.05rem;
   bottom: 0;
   height: 2px;
   background: #7c8cf5;

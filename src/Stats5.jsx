@@ -1,5 +1,6 @@
 import horizonMark from "./assets/horizon-mark.png";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useSearchParams } from "react-router-dom";
 import {
   compareRaidScheduleAsc,
   formatRaidDateTime,
@@ -72,6 +73,11 @@ function getDayBuckets(raids, scopeDays) {
   return buckets;
 }
 
+function getTimeClusterLabel(raid) {
+  if (raid.localDate && raid.localTime) return `${raid.localDate}-${raid.localTime}`;
+  return formatRaidDateTime(raid);
+}
+
 function GuildAvatar({ guild }) {
   return <img src={guild.guildIconUrl || horizonMark} alt="" />;
 }
@@ -88,7 +94,15 @@ export default function Stats5() {
   const [selectedGuildIds, setSelectedGuildIds] = useState([]);
   const [activeRaidId, setActiveRaidId] = useState(null);
   const [selectedGuildId, setSelectedGuildId] = useState(null);
+  const [searchParams] = useSearchParams();
   const { error, events, guilds, isLoading, raidsByType, totalGuilds, totalRaids, raidsToday } = useStatsData();
+
+  useEffect(() => {
+    const guildId = searchParams.get("guild");
+    if (!guildId) return;
+    const match = guilds.find((guild) => guild.guild_id === guildId);
+    if (match) selectGuildAndScroll(guildId);
+  }, [guilds, searchParams]);
 
   const dateScopedRaids = useMemo(() => {
     const today = getDateKeyFromDate(new Date());
@@ -130,7 +144,6 @@ export default function Stats5() {
     .slice(0, 28);
   const maxGuildRaids = Math.max(1, ...topGuilds.map((guild) => guild.raids.length));
   const dayBuckets = getDayBuckets(scopedRaids, scopeDays);
-  const maxBucket = Math.max(1, ...dayBuckets.map((bucket) => bucket.count));
   const maxRaidType = Math.max(1, ...raidsByType.map((type) => type.count));
   const guildFilterBase = selectedRaidTypes.length === 0
     ? dateScopedRaids
@@ -149,8 +162,56 @@ export default function Stats5() {
   const guildFilterOptions = guilds
     .filter((guild) => guildScopeCounts[guild.guild_id])
     .sort((a, b) => (guildScopeCounts[b.guild_id] || 0) - (guildScopeCounts[a.guild_id] || 0));
-  const nextRaidLabel = visibleRaids[0] ? formatRaidDateTime(visibleRaids[0]) : "No contacts";
   const busiestBucket = dayBuckets.slice().sort((a, b) => b.count - a.count)[0];
+  const nowMs = Date.now();
+  const pressureWindows = [
+    {
+      label: "Next 2h",
+      count: scopedRaids.filter((raid) => {
+        const time = getRaidScheduleValue(raid);
+        return time >= nowMs && time <= nowMs + 2 * 60 * 60 * 1000;
+      }).length,
+    },
+    {
+      label: "Next 6h",
+      count: scopedRaids.filter((raid) => {
+        const time = getRaidScheduleValue(raid);
+        return time >= nowMs && time <= nowMs + 6 * 60 * 60 * 1000;
+      }).length,
+    },
+    {
+      label: scopeDays === 1 ? "Today" : "In range",
+      count: scopedRaids.length,
+    },
+  ];
+  const timeClusterMap = scopedRaids.reduce((map, raid) => {
+    const key = getTimeClusterLabel(raid);
+    if (!map.has(key)) {
+      map.set(key, {
+        key,
+        label: formatRaidDateTime(raid),
+        count: 0,
+      });
+    }
+    map.get(key).count += 1;
+    return map;
+  }, new Map());
+  const timeClusters = [...timeClusterMap.values()].sort((a, b) => b.count - a.count);
+  const peakCluster = timeClusters[0] || null;
+  const typeMix = RAID_TYPE_ORDER.map((raidType) => ({
+    raidType,
+    count: scopedRaids.filter((raid) => raid.raidType === raidType).length,
+  }));
+  const maxScopedType = Math.max(1, ...typeMix.map((type) => type.count));
+  const dominantScopedType = typeMix.slice().sort((a, b) => b.count - a.count)[0];
+  const scopedGuildMix = guilds
+    .map((guild) => ({
+      guild,
+      count: scopedRaids.filter((raid) => raid.guild_id === guild.guild_id).length,
+    }))
+    .filter((item) => item.count > 0)
+    .sort((a, b) => b.count - a.count);
+  const topScopedGuild = scopedGuildMix[0] || null;
 
   function toggleRaidType(raidType) {
     setSelectedRaidTypes((prev) => (
@@ -182,11 +243,11 @@ export default function Stats5() {
     <main className="stats5-page">
       <section className="stats5-hero">
         <div>
-          <p className="stats5-kicker">Experiment 04</p>
-          <h1>Horizon Radar</h1>
-          <p>
-            Centcom presents upcoming raids by type and time. Guild icons stay clickable so
-            the page behaves the way you naturally expect.
+          <p className="stats5-kicker">CENTCOM Presents</p>
+          <h1>Operational Radar</h1>
+          <p>            
+            Tracking incoming contacts emerging over the horizon. Classify upcoming operations by guild, 
+            raid type, and time to target.
           </p>
         </div>
         <div className="stats5-totals" aria-label="Summary">
@@ -303,7 +364,7 @@ export default function Stats5() {
                 (() => {
                   const angle = -90 + index * (360 / RAID_TYPE_ORDER.length) + 360 / RAID_TYPE_ORDER.length / 2;
                   const radians = (angle * Math.PI) / 180;
-                  const radius = 52;
+                  const radius = 54;
 
                   return (
                     <span
@@ -418,34 +479,49 @@ export default function Stats5() {
       </section>
 
       <section className="stats5-detail">
-        <div className="stats5-active-card">
-          <span>Radar filters</span>
-          <strong>{selectedRaidTypes.length || selectedGuildIds.length ? "Filtered contacts" : "All contacts"}</strong>
-          {activeRaid ? (
-            <p className="stats5-contact-line">
-              Contact: <b>{activeRaid.raid_name || activeRaid.title}</b> / {activeRaid.guildName} / {formatRaidDateTime(activeRaid)}
-            </p>
-          ) : (
-            <p className="stats5-contact-line">No contacts match this filter.</p>
-          )}
+        <div className="stats5-active-card stats5-pressure-card">
+          <span>Time Pressure</span>
+          <strong>{peakCluster ? `${peakCluster.count} raids at ${peakCluster.label}` : "No active pressure"}</strong>
+          <div className="stats5-pressure-metrics">
+            {pressureWindows.map((window) => (
+              <span key={window.label}>
+                <b>{window.count}</b>
+                {window.label}
+              </span>
+            ))}
+          </div>
+          <div className="stats5-pressure-bars" aria-label="Largest time clusters">
+            {timeClusters.slice(0, 5).map((cluster) => (
+              <div className="stats5-pressure-row" key={cluster.key}>
+                <span>{cluster.label}</span>
+                <i><b style={{ "--pressure-width": `${Math.max(8, (cluster.count / Math.max(1, peakCluster?.count || 1)) * 100)}%` }} /></i>
+                <strong>{cluster.count}</strong>
+              </div>
+            ))}
+            {timeClusters.length === 0 && <p>No raids match the current radar filters.</p>}
+          </div>
         </div>
 
-        <div className="stats5-line-card">
+        <div className="stats5-line-card stats5-signal-card">
           <header>
-            <span>Scope summary</span>
-            <strong>{selectedRaidTypes.length === 1 ? selectedRaidTypes[0] : selectedRaidTypes.length > 1 ? `${selectedRaidTypes.length} raid types` : "All raids"}</strong>
+            <span>Signal Mix</span>
+            <strong>{dominantScopedType?.count ? `${dominantScopedType.raidType} heavy` : "No signal"}</strong>
           </header>
           <div className="stats5-scope-metrics">
             <span><b>{visibleRaids.length}</b> contacts</span>
-            <span><b>{nextRaidLabel}</b> next</span>
+            <span><b>{topScopedGuild?.guild.guildName || "None"}</b> top guild</span>
             <span><b>{busiestBucket?.label || "None"}</b> busiest</span>
           </div>
-          <div className="stats5-line-chart">
-            {dayBuckets.map((bucket) => (
-              <div className="stats5-line-column" key={bucket.key}>
-                <i style={{ "--bar-height": `${Math.max(5, (bucket.count / maxBucket) * 100)}%` }} />
-                <span>{bucket.label}</span>
-                <strong>{bucket.count}</strong>
+          <div className="stats5-signal-mix" aria-label="Raid type signal mix">
+            {typeMix.map((type) => (
+              <div
+                className="stats5-signal-row"
+                key={type.raidType}
+                style={{ "--raid-color": RAID_COLORS[type.raidType] }}
+              >
+                <span>{type.raidType}</span>
+                <i><b style={{ "--signal-width": `${Math.max(4, (type.count / maxScopedType) * 100)}%` }} /></i>
+                <strong>{type.count}</strong>
               </div>
             ))}
           </div>

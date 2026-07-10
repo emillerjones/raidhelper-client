@@ -4,7 +4,8 @@ import horizonLogo from "../assets/horizon-logo.png";
 import "./Navbar.css";
 
 const NAV_LINKS = [
-  { label: "Raid Calendar", path: "/calendar" },
+  { label: "Radar", path: "/stats5" },
+  { label: "Calendar", path: "/calendar" },
   { label: "Features", path: "/features" },
   { label: "How It Works", path: "/how-it-works" },
   { label: "Stats", path: "/stats" },
