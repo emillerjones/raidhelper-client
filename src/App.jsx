@@ -53,11 +53,11 @@ export default function App() {
 
       <Route element={<MainLayout heroHeight="820px" />}>
         <Route path="/stats4" element={<Stats4 />} />
-      </Route>
+      </Route> */}
 
       <Route element={<MainLayout heroHeight="820px" />}>
         <Route path="/stats5" element={<Stats5 />} />
-      </Route> */}
+      </Route>
 
       <Route element={<MainLayout heroHeight="820px" />}>
         <Route path="/faq" element={<FAQ />} />
