@@ -1,6 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
 
 const API = import.meta.env.VITE_API;
+const VISITOR_ID_KEY = "horizonVisitorId";
+
+export function getVisitorId() {
+  let visitorId = localStorage.getItem(VISITOR_ID_KEY);
+
+  if (!visitorId) {
+    // Anonymous id so the server can count repeat visits without a login.
+    visitorId = crypto.randomUUID
+      ? crypto.randomUUID()
+      : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    localStorage.setItem(VISITOR_ID_KEY, visitorId);
+  }
+
+  return visitorId;
+}
 
 export const RAID_KEYWORDS = {
   ZG: ["zg", "zul", "gurub", "zul gurub"],
@@ -253,7 +268,7 @@ function buildUpcomingRaids(events, limit = 28) {
     .slice(0, limit);
 }
 
-export function useStatsData() {
+export function useStatsData(page) {
   const [events, setEvents] = useState([]);
   const [error, setError] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -263,7 +278,12 @@ export function useStatsData() {
 
     async function fetchStats() {
       try {
-        const res = await fetch(`${API}/api/raidhelper/stats`);
+        const url = page
+          ? `${API}/api/raidhelper/stats?page=${encodeURIComponent(page)}`
+          : `${API}/api/raidhelper/stats`;
+        const res = await fetch(url, {
+          headers: page ? { "X-Visitor-Id": getVisitorId() } : undefined,
+        });
         if (!res.ok) throw new Error(`Request failed: ${res.status}`);
         const data = await res.json();
         const allRaids = data.raids || (data.guilds || []).flatMap((guild) => guild.raids || []);
@@ -284,7 +304,7 @@ export function useStatsData() {
     return () => {
       isMounted = false;
     };
-  }, []);
+  }, [page]);
 
   return useMemo(() => {
     const today = getDateKeyFromDate(new Date());

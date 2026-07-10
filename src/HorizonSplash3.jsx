@@ -199,7 +199,7 @@ function CalendarPreview({ kind }) {
 export default function HorizonSplash3() {
   const [heroView, setHeroView] = useState("radar");
   const isMobile = useIsMobile();
-  const { error, events, guilds, isLoading, raidsByType, totalGuilds, totalRaids, raidsToday } = useStatsData();
+  const { error, events, guilds, isLoading, raidsByType, totalGuilds, totalRaids, raidsToday } = useStatsData("home");
   const today = getDateKeyFromDate(new Date());
   const scopeEnd = getScopeEnd(3);
   const radarRaids = events

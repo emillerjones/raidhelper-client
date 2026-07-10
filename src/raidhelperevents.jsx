@@ -4,10 +4,10 @@ import useEmblaCarousel from "embla-carousel-react";
 import horizonLogo from "./assets/horizon-logo.png";
 import RaidEventDetailsModal from "./RaidEventDetailsModal";
 import GuildBadge from "./components/GuildBadge";
+import { getVisitorId } from "./statsData";
 import "./raidhelperevents.css";
 
 const API = import.meta.env.VITE_API;
-const VISITOR_ID_KEY = "horizonVisitorId";
 
 const RAID_KEYWORDS = {
   ZG: ["zg", "zul", "gurub", "zul gurub"],
@@ -30,20 +30,6 @@ const RAID_COLORS = {
 };
 
 const MOBILE_BREAKPOINT = 768;
-
-function getVisitorId() {
-  let visitorId = localStorage.getItem(VISITOR_ID_KEY);
-
-  if (!visitorId) {
-    // Anonymous id so the server can count repeat visits without a login.
-    visitorId = crypto.randomUUID
-      ? crypto.randomUUID()
-      : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
-    localStorage.setItem(VISITOR_ID_KEY, visitorId);
-  }
-
-  return visitorId;
-}
 
 function matchRaidType(title) {
   if (!title) return null;

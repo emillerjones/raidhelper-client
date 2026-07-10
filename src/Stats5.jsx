@@ -86,6 +86,72 @@ function RaidAvatar({ raid }) {
   return <img src={raid.guildIconUrl || horizonMark} alt="" />;
 }
 
+function ChipRail({ ariaLabel, className, label, children }) {
+  const railRef = useRef(null);
+  const [canLeft, setCanLeft] = useState(false);
+  const [canRight, setCanRight] = useState(false);
+
+  useEffect(() => {
+    const el = railRef.current;
+    if (!el) return;
+
+    function update() {
+      setCanLeft(el.scrollLeft > 4);
+      setCanRight(el.scrollLeft < el.scrollWidth - el.clientWidth - 4);
+    }
+
+    update();
+    el.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    return () => {
+      el.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
+  }, [children]);
+
+  function scrollByAmount(amount) {
+    railRef.current?.scrollBy({ left: amount, behavior: "smooth" });
+  }
+
+  const railClassName = [
+    "stats5-chip-rail",
+    className,
+    canLeft ? "stats5-chip-rail--can-left" : "",
+    canRight ? "stats5-chip-rail--can-right" : "",
+  ].filter(Boolean).join(" ");
+
+  return (
+    <div className="stats5-filter-row">
+      <span>{label}</span>
+      <div className="stats5-chip-rail-wrap">
+        <button
+          aria-label="Scroll left"
+          className="stats5-chip-nav stats5-chip-nav--left"
+          disabled={!canLeft}
+          onClick={() => scrollByAmount(-220)}
+          tabIndex={canLeft ? 0 : -1}
+          type="button"
+        >
+          &lt;
+        </button>
+        <div aria-label={ariaLabel} className={railClassName} ref={railRef}>
+          {children}
+        </div>
+        <button
+          aria-label="Scroll right"
+          className="stats5-chip-nav stats5-chip-nav--right"
+          disabled={!canRight}
+          onClick={() => scrollByAmount(220)}
+          tabIndex={canRight ? 0 : -1}
+          type="button"
+        >
+          &gt;
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function Stats5() {
   const selectedGuildPanelRef = useRef(null);
   const [scopeDays, setScopeDays] = useState(1);
@@ -95,7 +161,7 @@ export default function Stats5() {
   const [activeRaidId, setActiveRaidId] = useState(null);
   const [selectedGuildId, setSelectedGuildId] = useState(null);
   const [searchParams] = useSearchParams();
-  const { error, events, guilds, isLoading, raidsByType, totalGuilds, totalRaids, raidsToday } = useStatsData();
+  const { error, events, guilds, isLoading, raidsByType, totalGuilds, totalRaids, raidsToday } = useStatsData("radar");
 
   useEffect(() => {
     const guildId = searchParams.get("guild");
@@ -296,56 +362,50 @@ export default function Stats5() {
             </div>
           </div>
         </div>
-        <div className="stats5-filter-row">
-          <span>Raid type</span>
-          <div className="stats5-chip-rail" aria-label="Filter by raid type">
+        <ChipRail ariaLabel="Filter by raid type" label="Raid type">
+          <button
+            className={selectedRaidTypes.length === 0 ? "stats5-filter-chip stats5-filter-chip--active" : "stats5-filter-chip"}
+            onClick={() => setSelectedRaidTypes([])}
+            type="button"
+          >
+            <span>All</span>
+            <b>{raidTypeFilterBase.length}</b>
+          </button>
+          {RAID_TYPE_ORDER.map((raidType) => (
             <button
-              className={selectedRaidTypes.length === 0 ? "stats5-filter-chip stats5-filter-chip--active" : "stats5-filter-chip"}
-              onClick={() => setSelectedRaidTypes([])}
+              className={selectedRaidTypes.includes(raidType) ? "stats5-filter-chip stats5-filter-chip--active" : "stats5-filter-chip"}
+              key={raidType}
+              onClick={() => toggleRaidType(raidType)}
+              style={{ "--raid-color": RAID_COLORS[raidType] }}
               type="button"
             >
-              <span>All</span>
-              <b>{raidTypeFilterBase.length}</b>
+              <span>{raidType}</span>
+              <b>{typeScopeCounts[raidType]}</b>
             </button>
-            {RAID_TYPE_ORDER.map((raidType) => (
-              <button
-                className={selectedRaidTypes.includes(raidType) ? "stats5-filter-chip stats5-filter-chip--active" : "stats5-filter-chip"}
-                key={raidType}
-                onClick={() => toggleRaidType(raidType)}
-                style={{ "--raid-color": RAID_COLORS[raidType] }}
-                type="button"
-              >
-                <span>{raidType}</span>
-                <b>{typeScopeCounts[raidType]}</b>
-              </button>
-            ))}
-          </div>
-        </div>
-        <div className="stats5-filter-row">
-          <span>Guilds</span>
-          <div className="stats5-chip-rail stats5-chip-rail--guilds" aria-label="Filter by guild">
+          ))}
+        </ChipRail>
+        <ChipRail ariaLabel="Filter by guild" className="stats5-chip-rail--guilds" label="Guilds">
+          <button
+            className={selectedGuildIds.length === 0 ? "stats5-filter-chip stats5-filter-chip--active" : "stats5-filter-chip"}
+            onClick={() => setSelectedGuildIds([])}
+            type="button"
+          >
+            <span>All guilds</span>
+            <b>{guildFilterBase.length}</b>
+          </button>
+          {guildFilterOptions.map((guild) => (
             <button
-              className={selectedGuildIds.length === 0 ? "stats5-filter-chip stats5-filter-chip--active" : "stats5-filter-chip"}
-              onClick={() => setSelectedGuildIds([])}
+              className={selectedGuildIds.includes(guild.guild_id) ? "stats5-filter-chip stats5-filter-chip--guild stats5-filter-chip--active" : "stats5-filter-chip stats5-filter-chip--guild"}
+              key={guild.guild_id}
+              onClick={() => toggleGuild(guild.guild_id)}
               type="button"
             >
-              <span>All guilds</span>
-              <b>{guildFilterBase.length}</b>
+              <GuildAvatar guild={guild} />
+              <span>{guild.guildName || "Unknown guild"}</span>
+              <b>{guildScopeCounts[guild.guild_id]}</b>
             </button>
-            {guildFilterOptions.map((guild) => (
-              <button
-                className={selectedGuildIds.includes(guild.guild_id) ? "stats5-filter-chip stats5-filter-chip--guild stats5-filter-chip--active" : "stats5-filter-chip stats5-filter-chip--guild"}
-                key={guild.guild_id}
-                onClick={() => toggleGuild(guild.guild_id)}
-                type="button"
-              >
-                <GuildAvatar guild={guild} />
-                <span>{guild.guildName || "Unknown guild"}</span>
-                <b>{guildScopeCounts[guild.guild_id]}</b>
-              </button>
-            ))}
-          </div>
-        </div>
+          ))}
+        </ChipRail>
       </section>
 
       <section className="stats5-command" aria-busy={isLoading}>
