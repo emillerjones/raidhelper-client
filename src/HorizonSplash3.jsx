@@ -107,13 +107,38 @@ function GuildAvatar({ guild }) {
   return <img src={guild.guildIconUrl || horizonMark} alt="" />;
 }
 
-const CALENDAR_PREVIEW_WIDTH = 1600;
-const CALENDAR_PREVIEW_HEIGHT = 900;
+const DESKTOP_CALENDAR_WIDTH = 1600;
+const DESKTOP_CALENDAR_HEIGHT = 900;
+const MOBILE_CALENDAR_WIDTH = 390;
+const MOBILE_CALENDAR_HEIGHT = 780;
+const MOBILE_BREAKPOINT = 768;
+
+// Same 768px threshold used by Navbar.jsx and HorizonSplash.jsx, so all
+// mobile-detecting components on the site stay in sync.
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(
+    typeof window !== "undefined" ? window.innerWidth <= MOBILE_BREAKPOINT : false
+  );
+
+  useEffect(() => {
+    function handleResize() {
+      setIsMobile(window.innerWidth <= MOBILE_BREAKPOINT);
+    }
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return isMobile;
+}
 
 // Iframe renders at native width and is shrunk with a CSS transform, so the
 // real app's own responsive breakpoints don't kick in at a tiny embed size.
-function CalendarPreview() {
+// On mobile, "kind" switches to the app's native mobile width so its own
+// swipeable day view renders, instead of a tiny shrunk desktop grid.
+function CalendarPreview({ kind }) {
   const wrapRef = useRef(null);
+  const naturalWidth = kind === "mobile" ? MOBILE_CALENDAR_WIDTH : DESKTOP_CALENDAR_WIDTH;
+  const naturalHeight = kind === "mobile" ? MOBILE_CALENDAR_HEIGHT : DESKTOP_CALENDAR_HEIGHT;
   const [scale, setScale] = useState(0.3);
 
   useEffect(() => {
@@ -126,7 +151,7 @@ function CalendarPreview() {
       rafId = requestAnimationFrame(() => {
         rafId = null;
         const width = el.offsetWidth;
-        if (width > 0) setScale(width / CALENDAR_PREVIEW_WIDTH);
+        if (width > 0) setScale(width / naturalWidth);
       });
     };
 
@@ -137,17 +162,24 @@ function CalendarPreview() {
       observer.disconnect();
       if (rafId) cancelAnimationFrame(rafId);
     };
-  }, []);
+  }, [naturalWidth]);
 
   return (
-    <div className="home3-calendar-wrap" ref={wrapRef}>
+    <div
+      className={
+        kind === "mobile"
+          ? "home3-calendar-wrap home3-calendar-wrap--mobile"
+          : "home3-calendar-wrap"
+      }
+      ref={wrapRef}
+    >
       <iframe
         className="home3-calendar-iframe"
         loading="lazy"
         src="https://raidhelper-client.vercel.app/calendar"
         style={{
-          width: `${CALENDAR_PREVIEW_WIDTH}px`,
-          height: `${CALENDAR_PREVIEW_HEIGHT}px`,
+          width: `${naturalWidth}px`,
+          height: `${naturalHeight}px`,
           transform: `scale(${scale})`,
         }}
         title="Raid Calendar live preview"
@@ -158,6 +190,7 @@ function CalendarPreview() {
 
 export default function HorizonSplash3() {
   const [heroView, setHeroView] = useState("radar");
+  const isMobile = useIsMobile();
   const { error, events, guilds, isLoading, raidsByType, totalGuilds, totalRaids, raidsToday } = useStatsData();
   const today = getDateKeyFromDate(new Date());
   const scopeEnd = getScopeEnd(3);
@@ -211,32 +244,36 @@ export default function HorizonSplash3() {
           </div>
         </div>
 
-        <div className="home3-command-preview" aria-busy={isLoading}>
+        <div className="home3-preview">
+          <div className="home3-view-toggle" role="tablist" aria-label="Hero preview">
+            <button
+              aria-selected={heroView === "radar"}
+              className={heroView === "radar" ? "home3-view-tab home3-view-tab--active" : "home3-view-tab"}
+              onClick={() => setHeroView("radar")}
+              role="tab"
+              type="button"
+            >
+              Live Radar
+            </button>
+            <button
+              aria-selected={heroView === "calendar"}
+              className={heroView === "calendar" ? "home3-view-tab home3-view-tab--active" : "home3-view-tab"}
+              onClick={() => setHeroView("calendar")}
+              role="tab"
+              type="button"
+            >
+              Live Calendar
+            </button>
+          </div>
+
+          <div className="home3-command-preview" aria-busy={isLoading}>
+          {heroView === "radar" ? (
+            <>
           <div className="home3-radar-card">
             <header className="home3-radar-header">
-              <div className="home3-view-toggle" role="tablist" aria-label="Hero preview">
-                <button
-                  aria-selected={heroView === "radar"}
-                  className={heroView === "radar" ? "home3-view-tab home3-view-tab--active" : "home3-view-tab"}
-                  onClick={() => setHeroView("radar")}
-                  role="tab"
-                  type="button"
-                >
-                  Live Radar
-                </button>
-                <button
-                  aria-selected={heroView === "calendar"}
-                  className={heroView === "calendar" ? "home3-view-tab home3-view-tab--active" : "home3-view-tab"}
-                  onClick={() => setHeroView("calendar")}
-                  role="tab"
-                  type="button"
-                >
-                  Live Calendar
-                </button>
-              </div>
-              {heroView === "radar" && <strong>{radarRaids.length} contacts incoming</strong>}
+              <span>Live radar</span>
+              <strong>{radarRaids.length} contacts incoming</strong>
             </header>
-            {heroView === "radar" ? (
               <div className="home3-radar-body">
                 <div className="home3-radar" aria-label="Live raid radar preview">
                   <div className="home3-radar-grid" />
@@ -289,11 +326,6 @@ export default function HorizonSplash3() {
                   })}
                 </div>
               </div>
-            ) : (
-              <div className="home3-calendar-body">
-                <CalendarPreview />
-              </div>
-            )}
           </div>
 
           <aside className="home3-feed-card">
@@ -325,19 +357,19 @@ export default function HorizonSplash3() {
               <span aria-hidden="true">-&gt;</span>
             </Link>
           </aside>
-        </div>
-      </section>
-
-      <section className="home3-features">
-        <p className="home3-features-kicker">BUILT FOR PLAYERS. DESIGNED FOR CLARITY.</p>
-        <div className="home3-features-grid">
-          {FEATURES.map((feature) => (
-            <div key={feature.title} className="home3-feature">
-              <span className="home3-feature-icon">{ICONS[feature.icon]}</span>
-              <h4>{feature.title}</h4>
-              <p>{feature.desc}</p>
+            </>
+          ) : (
+            <div className="home3-calendar-card">
+              <header className="home3-radar-header">
+                <span>Live calendar</span>
+                <strong>Full schedule</strong>
+              </header>
+              <div className="home3-calendar-body">
+                <CalendarPreview kind={isMobile ? "mobile" : "desktop"} />
+              </div>
             </div>
-          ))}
+          )}
+          </div>
         </div>
       </section>
 
@@ -427,6 +459,19 @@ export default function HorizonSplash3() {
           ))}
         </div>
         {error && <p className="home3-empty">Live stats are temporarily unavailable.</p>}
+      </section>
+
+      <section className="home3-features">
+        <p className="home3-features-kicker">BUILT FOR PLAYERS. DESIGNED FOR CLARITY.</p>
+        <div className="home3-features-grid">
+          {FEATURES.map((feature) => (
+            <div key={feature.title} className="home3-feature">
+              <span className="home3-feature-icon">{ICONS[feature.icon]}</span>
+              <h4>{feature.title}</h4>
+              <p>{feature.desc}</p>
+            </div>
+          ))}
+        </div>
       </section>
     </main>
   );
