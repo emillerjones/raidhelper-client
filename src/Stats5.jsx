@@ -14,9 +14,12 @@ import "./Stats5.css";
 
 const SCOPE_OPTIONS = [
   { label: "Today", days: 1 },
-  { label: "2 days", days: 2 },
-  { label: "3 days", days: 3 },
-  { label: "7 days", days: 7 },
+  { label: "2d", fullLabel: "2 days", days: 2 },
+  { label: "3d", fullLabel: "3 days", days: 3 },
+  { label: "4d", fullLabel: "4 days", days: 4 },
+  { label: "5d", fullLabel: "5 days", days: 5 },
+  { label: "6d", fullLabel: "6 days", days: 6 },
+  { label: "7d", fullLabel: "7 days", days: 7 },
 ];
 
 function getDiscordUrl(raid) {
@@ -154,6 +157,7 @@ function ChipRail({ ariaLabel, className, label, children }) {
 
 export default function Stats5() {
   const selectedGuildPanelRef = useRef(null);
+  const rangeRailRef = useRef(null);
   const [scopeDays, setScopeDays] = useState(1);
   const [viewMode, setViewMode] = useState("radar");
   const [selectedRaidTypes, setSelectedRaidTypes] = useState([]);
@@ -305,6 +309,47 @@ export default function Stats5() {
     });
   }
 
+  function updateRangeFromPointer(event) {
+    const rail = rangeRailRef.current;
+    if (!rail) return;
+
+    const track = rail.querySelector(".stats5-range-track");
+    const rect = (track || rail).getBoundingClientRect();
+    const isHorizontal = rect.width > rect.height;
+    const rawProgress = isHorizontal
+      ? (event.clientX - rect.left) / rect.width
+      : 1 - (event.clientY - rect.top) / rect.height;
+    const progress = Math.min(1, Math.max(0, rawProgress));
+    setScopeDays(Math.min(7, Math.max(1, Math.round(progress * 6) + 1)));
+  }
+
+  function handleRangePointerDown(event) {
+    event.preventDefault();
+    event.currentTarget.setPointerCapture?.(event.pointerId);
+    updateRangeFromPointer(event);
+  }
+
+  function handleRangePointerMove(event) {
+    if ((event.buttons & 1) !== 1) return;
+    updateRangeFromPointer(event);
+  }
+
+  function handleRangeKeyDown(event) {
+    if (event.key === "ArrowUp" || event.key === "ArrowRight") {
+      event.preventDefault();
+      setScopeDays((value) => Math.min(7, value + 1));
+    } else if (event.key === "ArrowDown" || event.key === "ArrowLeft") {
+      event.preventDefault();
+      setScopeDays((value) => Math.max(1, value - 1));
+    } else if (event.key === "Home") {
+      event.preventDefault();
+      setScopeDays(1);
+    } else if (event.key === "End") {
+      event.preventDefault();
+      setScopeDays(7);
+    }
+  }
+
   return (
     <main className="stats5-page">
       <section className="stats5-hero">
@@ -326,42 +371,6 @@ export default function Stats5() {
       {error && <p className="stats5-error">Could not load stats.</p>}
 
       <section className="stats5-controls" aria-label="Radar controls">
-        <div className="stats5-control-row stats5-control-row--primary">
-          <div>
-            <span>Radar range</span>
-            <div className="stats5-segments">
-              {SCOPE_OPTIONS.map((option) => (
-                <button
-                  className={scopeDays === option.days ? "stats5-segment stats5-segment--active" : "stats5-segment"}
-                  key={option.days}
-                  onClick={() => setScopeDays(option.days)}
-                  type="button"
-                >
-                  {option.label}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div>
-            <span>View</span>
-            <div className="stats5-segments">
-              <button
-                className={viewMode === "radar" ? "stats5-segment stats5-segment--active" : "stats5-segment"}
-                onClick={() => setViewMode("radar")}
-                type="button"
-              >
-                Radar
-              </button>
-              <button
-                className={viewMode === "timeline" ? "stats5-segment stats5-segment--active" : "stats5-segment"}
-                onClick={() => setViewMode("timeline")}
-                type="button"
-              >
-                Timeline
-              </button>
-            </div>
-          </div>
-        </div>
         <ChipRail ariaLabel="Filter by raid type" label="Raid type">
           <button
             className={selectedRaidTypes.length === 0 ? "stats5-filter-chip stats5-filter-chip--active" : "stats5-filter-chip"}
@@ -410,8 +419,64 @@ export default function Stats5() {
 
       <section className="stats5-command" aria-busy={isLoading}>
         <div className="stats5-visual">
+          <div
+            className="stats5-scan-range"
+            aria-label="Radar scan range"
+            style={{ "--range-progress": `${((scopeDays - 1) / 6) * 100}%` }}
+          >
+            <span>Scan range</span>
+            <div
+              aria-label="Radar scan range"
+              aria-valuemax="7"
+              aria-valuemin="1"
+              aria-valuenow={scopeDays}
+              className="stats5-range-rail"
+              onKeyDown={handleRangeKeyDown}
+              onPointerDown={handleRangePointerDown}
+              onPointerMove={handleRangePointerMove}
+              ref={rangeRailRef}
+              role="slider"
+              tabIndex={0}
+            >
+              <div className="stats5-range-track" aria-hidden="true">
+                <i />
+              </div>
+              {SCOPE_OPTIONS.map((option) => (
+                <button
+                  aria-pressed={scopeDays === option.days}
+                  className={scopeDays === option.days ? "stats5-range-step stats5-range-step--active" : "stats5-range-step"}
+                  key={option.days}
+                  onClick={() => setScopeDays(option.days)}
+                  title={option.fullLabel || option.label}
+                  type="button"
+                >
+                  <i />
+                  <b>{option.label}</b>
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="stats5-radar-count">
             Showing <strong>{visibleRaids.length}</strong> raids
+          </div>
+          <div className="stats5-card-view-toggle">
+            <span>View</span>
+            <div className="stats5-segments">
+              <button
+                className={viewMode === "radar" ? "stats5-segment stats5-segment--active" : "stats5-segment"}
+                onClick={() => setViewMode("radar")}
+                type="button"
+              >
+                Radar
+              </button>
+              <button
+                className={viewMode === "timeline" ? "stats5-segment stats5-segment--active" : "stats5-segment"}
+                onClick={() => setViewMode("timeline")}
+                type="button"
+              >
+                Timeline
+              </button>
+            </div>
           </div>
           {viewMode === "radar" ? (
             <div className="stats5-radar" aria-label="Upcoming raid radar">
