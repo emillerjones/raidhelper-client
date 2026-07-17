@@ -197,7 +197,7 @@ function CalendarPreview({ kind }) {
 }
 
 export default function HorizonSplash3() {
-  const [heroView, setHeroView] = useState("radar");
+  const [heroView, setHeroView] = useState("calendar");
   const isMobile = useIsMobile();
   const { error, events, guilds, isLoading, raidsByType, totalGuilds, totalRaids, raidsToday } = useStatsData("home");
   const today = getDateKeyFromDate(new Date());
@@ -470,7 +470,7 @@ export default function HorizonSplash3() {
       </section>
 
       <section className="home3-features">
-        <p className="home3-features-kicker">BUILT FOR PLAYERS. DESIGNED FOR CLARITY.</p>
+        <p className="home3-features-kicker">BUILT FOR THE COMMUNITY. DESIGNED FOR CLARITY.</p>
         <div className="home3-features-grid">
           {FEATURES.map((feature) => (
             <div key={feature.title} className="home3-feature">
